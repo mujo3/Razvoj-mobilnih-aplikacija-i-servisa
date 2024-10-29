@@ -1,4 +1,3 @@
-package com.example.zadaca1
 
 class FrontendDev (
     name: String,
