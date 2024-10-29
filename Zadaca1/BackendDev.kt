@@ -1,5 +1,3 @@
-package com.example.zadaca1
-
 class BackendDev(
      name: String,
      age: Int,
