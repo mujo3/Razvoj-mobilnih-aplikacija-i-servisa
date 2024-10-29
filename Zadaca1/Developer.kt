@@ -1,4 +1,3 @@
-package com.example.zadaca1
 
 open class Developer( //koristimo open class jer su klase po defaultu u Kotlinu finalne i ne mogu se nasljedjivati
     private val name: String,
