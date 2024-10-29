@@ -1,5 +1,3 @@
-package com.example.zadaca1
-
 object DevFunctions { //koristimo Object kako bismo implementirali i grupisali sve potrebne funkcije
 
     fun countDevelopersByLanguageUsingGroupingBy(developers: List<Developer>): Map<String, Int> {
