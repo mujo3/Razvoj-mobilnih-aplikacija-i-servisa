@@ -66,7 +66,7 @@ object DevFunctions { //koristimo Object kako bismo implementirali i grupisali s
         val averageAgeByLanguageUsingGB = averageAgeByLanguageUsingGroupingBy(developers)
         val developerCountByLanguageWithoutGB = countDevelopersByLanguageWithoutGroupingBy(developers)
         val averageAgeByLanguageWithoutGB = averageAgeByLanguageWithoutGroupingBy(developers)
-        // Ispis rezultata
+
         println("Broj developera po jeziku koristeci GroupingBy funkciju: $developerCountByLanguageUsingGB")
         println("Prosječna starost po jeziku koristeci GroupingBy funkciju: $averageAgeByLanguageUsingGB")
         println("Broj developera po jeziku bez GroupingBy funkcije: $developerCountByLanguageWithoutGB")
