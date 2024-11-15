@@ -1,0 +1,32 @@
+R_DEF: Internal format may change without notice
+local
+color black
+color white
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+id BirajBoju
+id SeekBars
+id blueLabel
+id blueSeekBar
+id blueValueText
+id colorDisplay
+id colorLabel
+id colorView
+id greenLabel
+id greenSeekBar
+id greenValueText
+id headerTitle
+id hexValueText
+id redLabel
+id redSeekBar
+id redValueText
+layout activity_main
+layout seekbars
+layout viewwidget
+mipmap ic_launcher
+mipmap ic_launcher_round
+string app_name
+style Base.Theme.Zadaca2RMAS
+style Theme.Zadaca2RMAS
+xml backup_rules
+xml data_extraction_rules

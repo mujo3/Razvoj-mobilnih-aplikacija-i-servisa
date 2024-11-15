@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <string name="app_name">Zadaca2 - RMAS</string>
+    <style name="Base.Theme.Zadaca2RMAS" parent="Theme.Material3.DayNight.NoActionBar">
+        
+        
+    </style>
+    <style name="Theme.Zadaca2RMAS" parent="Base.Theme.Zadaca2RMAS"/>
+</resources>
