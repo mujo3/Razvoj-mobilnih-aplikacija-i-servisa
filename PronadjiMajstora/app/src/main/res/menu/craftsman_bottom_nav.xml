@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_profile"
+        android:title="Profil"
+        android:icon="@drawable/ic_profile"/>
+
+    <item
+        android:id="@+id/nav_requests"
+        android:title="Zahtjevi"
+        android:icon="@drawable/ic_requests"/>
+
+    <item
+        android:id="@+id/nav_add_service"
+        android:title="Nova usluga"
+        android:icon="@drawable/ic_add"/>
+
+    <item
+        android:id="@+id/nav_messages"
+        android:title="Poruke"
+        android:icon="@drawable/ic_messages"/>
+</menu>

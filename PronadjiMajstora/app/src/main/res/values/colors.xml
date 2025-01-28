@@ -1,0 +1,12 @@
+ <resources>
+    <color name="colorPrimary">#4F5D75</color>        <!-- Siva-plava (primarna) -->
+    <color name="colorPrimaryVariant">#3A4050</color> <!-- Srednje tamna nijansa -->
+    <color name="colorSecondary">#EF8354</color>      <!-- Akcent narandžasta -->
+    <color name="colorBackground">#2D3142</color>     <!-- Tamna pozadina -->
+    <color name="colorText">#D8D8D8</color>           <!-- Svijetlo siva za tekst -->
+    <color name="colorHint">#8A8C8E</color>           <!-- Siva za hintove -->
+    <color name="colorAccent">#EF8354</color>         <!-- Narandžasta -->
+    <color name="colorSurface">#363B4A</color>        <!-- Srednje tamna površina -->
+    <color name="white">#FFFFFFFF</color>
+    <color name="colorPrimaryDark">#3700B3</color>
+</resources>

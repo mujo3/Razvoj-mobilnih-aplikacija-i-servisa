@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">PronadjiMajstora</string>
+    <string name="fab_profile_desc">Profil korisnika</string>
+    <string name="default_web_client_id">YOUR_CLIENT_ID_HERE</string>
+    <string name="category_label">Kategorija</string>
+    <string name="category_hint">Odaberite kategoriju</string>
+    <string name="category_placeholder">Sve kategorije</string>
+    <string name="category_selector_desc">Odabir kategorije usluge</string>
+    <string name="location_label">Lokacija</string>
+    <string name="location_hint">Unesite lokaciju</string>
+    <string name="location_input_desc">Unos željene lokacije</string>
+    <string name="price_range_label">Maksimalna cijena (KM)</string>
+    <string name="price_seekbar_desc">Postavljanje maksimalne cijene</string>
+    <string name="apply_filters">Primijeni filtere</string>
+    <string name="apply_filters_desc">Potvrdi postavljene filtere</string>
+    <string-array name="locations">
+        <item>Sve lokacije</item>
+        <item>Sarajevo</item>
+        <item>Mostar</item>
+        <item>Banja Luka</item>
+    </string-array>
 </resources>

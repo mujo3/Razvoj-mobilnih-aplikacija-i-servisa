@@ -7,6 +7,10 @@ android {
     namespace = "com.example.pronadjimajstora"
     compileSdk = 35
 
+    buildFeatures {
+        viewBinding = true
+    }
+
     defaultConfig {
         applicationId = "com.example.pronadjimajstora"
         minSdk = 24
@@ -36,7 +40,20 @@ android {
 }
 
 dependencies {
-
+    implementation ("com.google.android.material:material:1.11.0")
+    implementation ("androidx.viewpager2:viewpager2:1.0.0")
+    implementation ("com.google.android.material:material:1.6.1")
+    implementation ("com.github.bumptech.glide:glide:4.13.2")
+    implementation ("com.google.firebase:firebase-storage:20.0.1")
+    implementation ("com.google.firebase:firebase-auth-ktx")
+    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation ("com.facebook.android:facebook-android-sdk:16.3.0")
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
+    implementation (platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation ("com.google.firebase:firebase-auth")
+    implementation ("com.google.firebase:firebase-firestore")
+    implementation ("com.facebook.android:facebook-android-sdk:16.3.0")
+    implementation ("com.google.android.gms:play-services-auth:21.0.0")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("com.google.android.material:material:1.12.0")
