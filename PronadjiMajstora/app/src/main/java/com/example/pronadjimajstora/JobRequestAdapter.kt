@@ -6,8 +6,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.pronadjimajstora.databinding.ItemJobRequestBinding
 
 class JobRequestAdapter(
-    private val requests: List<JobRequest>
+    private val requests: MutableList<JobRequest>
 ) : RecyclerView.Adapter<JobRequestAdapter.JobRequestViewHolder>() {
+
+    var onRespondClick: ((JobRequest) -> Unit)? = null
 
     inner class JobRequestViewHolder(val binding: ItemJobRequestBinding) :
         RecyclerView.ViewHolder(binding.root)
@@ -25,6 +27,12 @@ class JobRequestAdapter(
             tvDescription.text = request.description
             tvBudget.text = "Budžet: ${request.budget} KM"
             tvStatus.text = "Status: ${request.status}"
+
+            btnRespond.setOnClickListener {
+                request.status = "Odgovoreno"
+                notifyItemChanged(position)
+                onRespondClick?.invoke(request)
+            }
         }
     }
 

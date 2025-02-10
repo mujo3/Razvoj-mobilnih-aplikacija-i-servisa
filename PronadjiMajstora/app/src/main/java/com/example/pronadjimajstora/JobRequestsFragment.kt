@@ -12,6 +12,9 @@ class JobRequestsFragment : Fragment() {
     private var _binding: FragmentJobRequestsBinding? = null
     private val binding get() = _binding!!
 
+    // Uklonjeni su mock podaci; lista će biti popunjena pomoću Firebase/Firestore integracije.
+    private val requests = mutableListOf<JobRequest>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,16 +26,23 @@ class JobRequestsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupRecyclerView()
+    }
 
-        // Mock podaci
-        val mockRequests = listOf(
-            JobRequest(description = "Popravak slavine", budget = 50.0),
-            JobRequest(description = "Instalacija bojlera", budget = 200.0)
-        )
+    private fun setupRecyclerView() {
+        val adapter = JobRequestAdapter(requests).apply {
+            onRespondClick = { request ->
+                // Kod klika na "Odgovori" kod majstora, izvršava se navigacija na fragment s porukama.
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, CraftsmanMessagesFragment.newInstance())
+                    .addToBackStack(null)
+                    .commit()
+            }
+        }
 
         binding.rvRequests.apply {
             layoutManager = LinearLayoutManager(requireContext())
-            adapter = JobRequestAdapter(mockRequests)
+            this.adapter = adapter
         }
     }
 

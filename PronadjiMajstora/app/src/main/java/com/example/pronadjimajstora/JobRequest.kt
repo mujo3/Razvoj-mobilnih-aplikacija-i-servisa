@@ -8,6 +8,6 @@ data class JobRequest(
     val description: String = "",
     val budget: Double = 0.0,
     val location: String = "",
-    val status: String = "pending",
+    var status: String = "Na čekanju",
     val timestamp: Date = Date()
 )

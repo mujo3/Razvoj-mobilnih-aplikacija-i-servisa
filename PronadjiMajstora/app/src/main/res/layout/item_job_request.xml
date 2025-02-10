@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardElevation="2dp"
-    app:cardCornerRadius="8dp">
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,5 +34,21 @@
             android:layout_marginTop="4dp"
             android:textColor="@color/colorAccent"/>
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btn_respond"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="8dp"
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="4dp"
+            android:text="Odgovori"
+            android:textSize="14sp"
+            app:backgroundTint="@color/colorAccent"
+            app:icon="@drawable/ic_reply"
+            app:iconGravity="start"
+            app:iconPadding="4dp"
+            app:iconSize="20dp"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="1dp" />
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

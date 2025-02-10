@@ -13,7 +13,25 @@
         android:padding="24dp"
         android:gravity="center">
 
-        <!-- E-mail input -->
+        <!-- Unos imena i prezimena -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ime i prezime"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_marginBottom="16dp"
+            android:textColorHint="@color/white"
+            app:hintTextColor="@color/white">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etNameSurname"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:inputType="textPersonName"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- E-mail unos -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -30,7 +48,7 @@
                 android:inputType="textEmailAddress"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Password input -->
+        <!-- Unos šifre -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -48,7 +66,7 @@
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Confirm Password input -->
+        <!-- Unos potvrde šifre -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -66,7 +84,7 @@
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Radio buttons for user type -->
+        <!-- Radio gumbi za tip korisnika -->
         <RadioGroup
             android:id="@+id/radioUserType"
             android:layout_width="107dp"
@@ -94,7 +112,7 @@
                 android:textColor="@color/white" />
         </RadioGroup>
 
-        <!-- Register button -->
+        <!-- Gumb za registraciju -->
         <Button
             android:id="@+id/btnRegister"
             android:layout_width="match_parent"
@@ -106,7 +124,7 @@
             android:gravity="center"
             android:textAllCaps="false"/>
 
-        <!-- Facebook login button -->
+        <!-- Facebook prijava -->
         <com.facebook.login.widget.LoginButton
             android:id="@+id/btnFacebook"
             android:layout_width="match_parent"
@@ -115,7 +133,7 @@
             android:gravity="center"
             android:text="Continue with Facebook"/>
 
-        <!-- Google login button -->
+        <!-- Google prijava -->
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btnGoogle"
             android:layout_width="match_parent"

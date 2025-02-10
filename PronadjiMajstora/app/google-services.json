@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "228762122925",
+    "project_id": "pronadjimajstora-89ba6",
+    "storage_bucket": "pronadjimajstora-89ba6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:228762122925:android:b7203b91f7faa6a508a424",
+        "android_client_info": {
+          "package_name": "com.example.pronadjimajstora"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDNl9FvHuqhMFn8n1Cwjpcja4qJrAl8NT4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

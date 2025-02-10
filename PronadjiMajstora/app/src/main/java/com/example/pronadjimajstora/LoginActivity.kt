@@ -5,27 +5,55 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pronadjimajstora.databinding.ActivityLoginBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
         setupClickListeners()
     }
 
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (validateInput(email, password)) {
-                // Direktno preusmjeri na Home ekran
-                navigateToHome()
+                auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val uid = auth.currentUser?.uid
+                            if (uid != null) {
+                                firestore.collection("users").document(uid).get()
+                                    .addOnSuccessListener { document ->
+                                        if (document.exists()) {
+                                            val userType = document.getString("userType") ?: "kupac"
+                                            navigateToHome(userType)
+                                        } else {
+                                            Toast.makeText(this, "Podaci o korisniku nisu pronađeni", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                    .addOnFailureListener { e ->
+                                        Toast.makeText(this, "Greška pri dohvatu podataka: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                            } else {
+                                Toast.makeText(this, "Greška: Korisnik nije autentificiran", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            Toast.makeText(this, "Prijava neuspješna: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    }
             }
         }
 
@@ -53,9 +81,12 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun navigateToHome() {
-        // Pretpostavimo da je korisnik "kupac" za testiranje
-        val intent = Intent(this, HomeCustomerActivity::class.java)
+    private fun navigateToHome(userType: String) {
+        val intent = if (userType == "majstor") {
+            Intent(this, HomeCraftsmanActivity::class.java)
+        } else {
+            Intent(this, HomeCustomerActivity::class.java)
+        }
         startActivity(intent)
         finish()
     }

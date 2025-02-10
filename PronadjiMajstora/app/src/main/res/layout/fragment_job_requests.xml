@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:background="@color/colorBackground">
 
-    <!-- RecyclerView za prikaz zahtjeva -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_requests"
         android:layout_width="match_parent"

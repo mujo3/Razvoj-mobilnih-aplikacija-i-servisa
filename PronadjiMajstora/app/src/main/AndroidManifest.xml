@@ -40,11 +40,15 @@
             android:name=".ChatActivity"
             android:exported="false" />
 
-        <!-- Obrisi ovo ako ne koristis MainActivity -->
-        <!-- <activity
-            android:name=".MainActivity"
-            android:exported="true">
-        </activity> -->
+        <activity
+            android:name=".ProfileActivity"
+            android:label="Profil korisnika"
+            android:parentActivityName=".HomeCustomerActivity"/>
+
+        <activity
+            android:name=".EditProfileActivity"
+            android:label="Uredi profil"
+            android:parentActivityName=".ProfileActivity"/>
 
     </application>
 
