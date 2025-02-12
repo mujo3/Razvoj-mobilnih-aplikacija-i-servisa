@@ -133,14 +133,12 @@ class AddServiceFragment : Fragment() {
     ): Service {
         return Service(
             name = binding.etTitle.text.toString(),
-            category = craftsmanSpecialization,
+            specialization = craftsmanSpecialization, // Koristimo polje 'specialization' kao kategoriju
             craftsman = craftsmanName,
             rating = craftsmanRating,
             location = craftsmanLocation,
-            priceRange = "${binding.etPrice.text} KM",
-            priceRangeMax = binding.etPrice.text.toString().toDouble(),
+            price = binding.etPrice.text.toString().toDouble(),
             description = binding.etDescription.text.toString(),
-            specialization = craftsmanSpecialization,
             imageUrl = imageUrl
         )
     }

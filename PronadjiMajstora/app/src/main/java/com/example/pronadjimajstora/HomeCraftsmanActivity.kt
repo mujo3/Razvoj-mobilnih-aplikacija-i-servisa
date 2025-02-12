@@ -24,12 +24,13 @@ class HomeCraftsmanActivity : AppCompatActivity() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.nav_profile -> loadFragment(CraftsmanProfileFragment.newInstance())
-                R.id.nav_requests -> loadFragment(JobRequestsFragment.newInstance())
+                R.id.nav_requests -> loadFragment(CraftsmanAdsFragment.newInstance())
                 R.id.nav_add_service -> loadFragment(AddServiceFragment.newInstance())
                 R.id.nav_messages -> loadFragment(CraftsmanMessagesFragment.newInstance())
             }
             true
         }
+
     }
 
     private fun loadFragment(fragment: Fragment) {

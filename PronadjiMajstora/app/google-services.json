@@ -12,7 +12,20 @@
           "package_name": "com.example.pronadjimajstora"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "228762122925-rv8qjtprn1g42bcs8v3kbk6s9p6ciitf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.pronadjimajstora",
+            "certificate_hash": "b47b6a8bc162ea5055f1108c9a204f35139b5b4d"
+          }
+        },
+        {
+          "client_id": "228762122925-7fcdcm3j7eajfdlrauttd977g3rkco7h.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyDNl9FvHuqhMFn8n1Cwjpcja4qJrAl8NT4"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "228762122925-7fcdcm3j7eajfdlrauttd977g3rkco7h.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

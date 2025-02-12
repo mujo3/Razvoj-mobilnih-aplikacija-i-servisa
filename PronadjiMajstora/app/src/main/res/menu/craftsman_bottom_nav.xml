@@ -7,7 +7,7 @@
 
     <item
         android:id="@+id/nav_requests"
-        android:title="Zahtjevi"
+        android:title="Moje usluge"
         android:icon="@drawable/ic_requests"/>
 
     <item

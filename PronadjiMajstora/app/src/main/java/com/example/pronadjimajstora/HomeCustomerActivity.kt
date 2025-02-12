@@ -12,13 +12,12 @@ import com.google.firebase.firestore.FirebaseFirestore
 class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterListener {
     private lateinit var binding: ActivityHomeCustomerBinding
     private lateinit var serviceAdapter: ServiceAdapter
-    // Umjesto mockServices koristimo listu koja će biti napunjena stvarnim podacima
     private var serviceList = mutableListOf<Service>()
 
     // Filter i pretraga varijable
     private var currentCategoryFilter = "Sve kategorije"
     private var currentLocationFilter = ""
-    private var currentMaxPriceFilter = 0
+    private var currentMaxPriceFilter = 5000.0
     private var currentSearchQuery = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +29,6 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
         setupFilterIcon()
         setupProfileButton()
         setupSearchView()
-        // Učitaj stvarne servise iz Firestore-a
         fetchServicesFromFirestore()
     }
 
@@ -44,7 +42,6 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
         binding.rvServices.adapter = serviceAdapter
     }
 
-    // Metoda za dohvaćanje servisa iz Firestore kolekcije "services"
     private fun fetchServicesFromFirestore() {
         val firestore = FirebaseFirestore.getInstance()
         firestore.collection("services")
@@ -55,7 +52,7 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
                     val service = document.toObject(Service::class.java)
                     service?.let { serviceList.add(it) }
                 }
-                serviceAdapter.updateList(serviceList)
+                applyAllFilters()
             }
             .addOnFailureListener { exception ->
                 Toast.makeText(this, "Greška pri učitavanju servisa: ${exception.message}", Toast.LENGTH_LONG).show()
@@ -64,9 +61,9 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
 
     private fun setupFilterIcon() {
         binding.btnFilter.setOnClickListener {
-            FilterDialogFragment().apply {
-                setFilterListener(this@HomeCustomerActivity)
-            }.show(supportFragmentManager, "FilterDialog")
+            val filterDialog = FilterDialogFragment()
+            filterDialog.setFilterListener(this)
+            filterDialog.show(supportFragmentManager, "FilterDialog")
         }
     }
 
@@ -89,21 +86,21 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
         })
     }
 
-    override fun onFiltersApplied(category: String, location: String, maxPrice: Int) {
+    override fun onFiltersApplied(category: String, location: String, maxPrice: Double) {
         currentCategoryFilter = category
         currentLocationFilter = location.trim()
-        currentMaxPriceFilter = maxPrice
+        currentMaxPriceFilter = if (maxPrice == 0.0) 5000.0 else maxPrice
         applyAllFilters()
     }
 
     private fun applyAllFilters() {
         val filteredList = serviceList.filter { service ->
-            (currentCategoryFilter == "Sve kategorije" || service.category == currentCategoryFilter) &&
+            (currentCategoryFilter == "Sve kategorije" || service.specialization.equals(currentCategoryFilter, true)) &&
                     (currentLocationFilter.isEmpty() || service.location.contains(currentLocationFilter, true)) &&
-                    (currentMaxPriceFilter == 0 || service.priceRangeMax <= currentMaxPriceFilter) &&
-                    (service.name.contains(currentSearchQuery, true) ||
+                    (service.price <= currentMaxPriceFilter) &&
+                    (currentSearchQuery.isEmpty() || service.name.contains(currentSearchQuery, true) ||
                             service.craftsman.contains(currentSearchQuery, true) ||
-                            service.category.contains(currentSearchQuery, true) ||
+                            service.specialization.contains(currentSearchQuery, true) ||
                             service.location.contains(currentSearchQuery, true))
         }
         serviceAdapter.updateList(filteredList)

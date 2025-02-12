@@ -30,7 +30,7 @@ class ServiceAdapter(
             tvCraftsmanName.text = service.craftsman
             ratingBar.rating = service.rating
             tvLocation.text = "Lokacija: ${service.location}"
-            tvPriceRange.text = "Cijena: ${service.priceRange}"
+            tvPriceRange.text = "Cijena: ${service.price}"
             tvDescription.text = service.description
 
             // Ako je imageUrl marker "default", učitaj lokalni resurs; inače učitaj URL slike
