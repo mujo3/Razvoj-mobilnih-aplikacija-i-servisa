@@ -11,6 +11,7 @@ import com.example.pronadjimajstora.databinding.FragmentAddServiceBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 
 class AddServiceFragment : Fragment() {
     private var _binding: FragmentAddServiceBinding? = null
@@ -50,47 +51,132 @@ class AddServiceFragment : Fragment() {
 
         binding.btnSubmit.setOnClickListener {
             if (validateInputs()) {
-                val newService = createService()
-                saveServiceToFirestore(newService)
+                val currentUserUid = auth.currentUser?.uid
+                if (currentUserUid == null) {
+                    Snackbar.make(binding.root, "Korisnik nije prijavljen", Snackbar.LENGTH_LONG).show()
+                    return@setOnClickListener
+                }
+                firestore.collection("users").document(currentUserUid)
+                    .get()
+                    .addOnSuccessListener { document ->
+                        if (document.exists()) {
+                            val craftsmanName = document.getString("name") ?: "Nepoznato"
+                            val craftsmanLocation = document.getString("location") ?: "Nepoznato"
+                            val craftsmanRating = document.getDouble("rating")?.toFloat() ?: 0f
+                            val craftsmanSpecialization = document.getString("specialization") ?: "Nepoznato"
+
+                            if (imageUri != null) {
+                                uploadImageAndCreateService(
+                                    craftsmanName,
+                                    craftsmanLocation,
+                                    craftsmanRating,
+                                    craftsmanSpecialization
+                                )
+                            } else {
+                                val defaultImageMarker = "default"
+                                val newService = createService(
+                                    craftsmanName,
+                                    craftsmanLocation,
+                                    craftsmanRating,
+                                    craftsmanSpecialization,
+                                    defaultImageMarker
+                                )
+                                saveServiceToFirestore(newService)
+                            }
+                        } else {
+                            Snackbar.make(binding.root, "Korisnički podaci nisu dostupni", Snackbar.LENGTH_LONG).show()
+                        }
+                    }
+                    .addOnFailureListener { e ->
+                        Snackbar.make(binding.root, "Greška pri dohvaćanju korisničkih podataka: ${e.message}", Snackbar.LENGTH_LONG).show()
+                    }
             }
         }
     }
 
     private fun validateInputs(): Boolean {
+        val title = binding.etTitle.text.toString()
+        val description = binding.etDescription.text.toString()
+        val priceText = binding.etPrice.text.toString()
+
         return when {
-            binding.etTitle.text.toString().isEmpty() -> {
+            title.isEmpty() -> {
                 binding.etTitle.error = "Unesite naslov"
                 false
             }
-            binding.etDescription.text.toString().isEmpty() -> {
+            description.isEmpty() -> {
                 binding.etDescription.error = "Unesite opis"
                 false
             }
-            binding.etPrice.text.toString().isEmpty() -> {
+            priceText.isEmpty() -> {
                 binding.etPrice.error = "Unesite cijenu"
                 false
             }
-            else -> true
+            else -> {
+                try {
+                    priceText.toDouble()
+                    true
+                } catch (e: NumberFormatException) {
+                    binding.etPrice.error = "Cijena mora biti validan broj"
+                    false
+                }
+            }
         }
     }
 
-    private fun createService(): Service {
+    private fun createService(
+        craftsmanName: String,
+        craftsmanLocation: String,
+        craftsmanRating: Float,
+        craftsmanSpecialization: String,
+        imageUrl: String
+    ): Service {
         return Service(
-            id = System.currentTimeMillis().toString(),
             name = binding.etTitle.text.toString(),
-            category = "Opće", // U budućnosti dodati izbor kategorije
-            craftsman = auth.currentUser?.uid ?: "nepoznat", // Sprema se UID prijavljenog korisnika
-            rating = 4.5f,
-            location = "Sarajevo", // Možete dohvatiti iz profila korisnika
+            category = craftsmanSpecialization,
+            craftsman = craftsmanName,
+            rating = craftsmanRating,
+            location = craftsmanLocation,
             priceRange = "${binding.etPrice.text} KM",
-            priceRangeMax = binding.etPrice.text.toString().toInt(),
-            description = binding.etDescription.text.toString()
+            priceRangeMax = binding.etPrice.text.toString().toDouble(),
+            description = binding.etDescription.text.toString(),
+            specialization = craftsmanSpecialization,
+            imageUrl = imageUrl
         )
     }
 
+    private fun uploadImageAndCreateService(
+        craftsmanName: String,
+        craftsmanLocation: String,
+        craftsmanRating: Float,
+        craftsmanSpecialization: String
+    ) {
+        val storageRef = FirebaseStorage.getInstance().reference.child("service_images/${System.currentTimeMillis()}.jpg")
+        imageUri?.let { uri ->
+            storageRef.putFile(uri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        val imageUrl = downloadUri.toString()
+                        val newService = createService(
+                            craftsmanName,
+                            craftsmanLocation,
+                            craftsmanRating,
+                            craftsmanSpecialization,
+                            imageUrl
+                        )
+                        saveServiceToFirestore(newService)
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Snackbar.make(binding.root, "Greška pri uploadu slike: ${e.message}", Snackbar.LENGTH_LONG).show()
+                }
+        }
+    }
+
     private fun saveServiceToFirestore(service: Service) {
-        firestore.collection("services").document(service.id)
-            .set(service)
+        val documentRef = firestore.collection("services").document()
+        val serviceWithId = service.copy(id = documentRef.id)
+        documentRef.set(serviceWithId)
             .addOnSuccessListener {
                 showConfirmation()
                 clearForm()

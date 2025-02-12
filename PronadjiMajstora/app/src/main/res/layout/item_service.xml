@@ -14,12 +14,22 @@
         android:orientation="vertical"
         android:padding="16dp">
 
+        <!-- ImageView za prikaz slike usluge s manjom visinom -->
+        <ImageView
+            android:id="@+id/ivServiceImage"
+            android:layout_width="150sp"
+            android:layout_height="150sp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/ic_add_photo"
+            android:layout_gravity="top|center_horizontal"
+            android:layout_marginBottom="8dp" />
+
         <TextView
             android:id="@+id/tvServiceName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:textSize="18sp"/>
+            android:textSize="22sp"/>
 
         <TextView
             android:id="@+id/tvCraftsmanName"
