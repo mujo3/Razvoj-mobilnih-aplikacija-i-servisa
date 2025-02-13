@@ -13,24 +13,6 @@
         android:padding="24dp"
         android:gravity="center">
 
-        <!-- Unos imena i prezimena -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Ime i prezime"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginBottom="16dp"
-            android:textColorHint="@color/white"
-            app:hintTextColor="@color/white">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNameSurname"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:inputType="textPersonName"/>
-        </com.google.android.material.textfield.TextInputLayout>
-
         <!-- E-mail unos -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -54,7 +36,7 @@
             android:layout_height="wrap_content"
             android:hint="Šifra"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white">
 
@@ -72,7 +54,7 @@
             android:layout_height="wrap_content"
             android:hint="Potvrdi šifru"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:textColorHint="@color/white"
             app:hintTextColor="@color/white">
 
@@ -83,34 +65,6 @@
                 android:textColor="@color/white"
                 android:inputType="textPassword"/>
         </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Radio gumbi za tip korisnika -->
-        <RadioGroup
-            android:id="@+id/radioUserType"
-            android:layout_width="107dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:buttonTint="@color/colorPrimaryVariant"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <RadioButton
-                android:id="@+id/radioCustomer"
-                android:layout_width="107dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:buttonTint="@color/colorPrimary"
-                android:text="Kupac"
-                android:textColor="@color/white" />
-
-            <RadioButton
-                android:id="@+id/radioCraftsman"
-                android:layout_width="107dp"
-                android:layout_height="wrap_content"
-                android:buttonTint="@color/colorPrimary"
-                android:text="Majstor"
-                android:textColor="@color/white" />
-        </RadioGroup>
 
         <!-- Gumb za registraciju -->
         <Button
@@ -124,21 +78,25 @@
             android:gravity="center"
             android:textAllCaps="false"/>
 
-        <!-- Facebook prijava -->
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/btnFacebook"
+        <!-- Facebook Prijava Dugme -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnFacebookLogin"
             android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:gravity="center"
-            android:text="Continue with Facebook"/>
+            android:layout_height="wrap_content"
+            android:text="Facebook prijava"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:backgroundTint="@color/facebook_blue"
+            app:cornerRadius="4dp"
+            android:layout_marginTop="4dp"
+            />
 
         <!-- Google prijava -->
         <com.google.android.gms.common.SignInButton
             android:id="@+id/btnGoogle"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:layout_marginTop="16dp"/>
+            android:layout_marginTop="4dp"/>
 
     </LinearLayout>
 </ScrollView>

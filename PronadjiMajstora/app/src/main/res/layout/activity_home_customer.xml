@@ -60,6 +60,14 @@
         android:padding="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
+    <TextView
+        android:id="@+id/tvEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="Nema pronađenih servisa"
+        android:visibility="gone"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabProfile"
         android:layout_width="wrap_content"
@@ -70,5 +78,4 @@
         android:src="@drawable/ic_profile"
         app:backgroundTint="@color/colorSecondary"
         app:tint="@color/colorSurface"/>
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

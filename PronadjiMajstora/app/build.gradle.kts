@@ -61,8 +61,7 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
 
-    // Facebook i Google prijava
-    implementation("com.facebook.android:facebook-android-sdk:16.3.0")
+
     implementation("com.google.android.gms:play-services-auth:21.0.0")
     implementation("com.google.firebase:firebase-firestore:25.1.2")
 

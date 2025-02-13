@@ -12,4 +12,8 @@
     <color name="colorPrimaryDark">#3700B3</color>
     <color name="nav_item_selected">@color/colorSecondary</color>
     <color name="nav_item_unselected">@color/colorText</color>
+    <color name="facebook_blue">#1877F2</color>
+    <color name="message_timestamp">#B3FFFFFF</color>
+    <color name="received_message">#F5F5F5</color>
+    <color name="sent_message">#2196F3</color>
 </resources>

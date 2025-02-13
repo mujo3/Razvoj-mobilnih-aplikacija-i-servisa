@@ -30,7 +30,6 @@ class HomeCraftsmanActivity : AppCompatActivity() {
             }
             true
         }
-
     }
 
     private fun loadFragment(fragment: Fragment) {

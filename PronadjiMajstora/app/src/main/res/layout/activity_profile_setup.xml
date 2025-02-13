@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBackground"
+    android:padding="16dp"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <!-- Ime i prezime -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/TextInputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Ime i prezime"
+            app:hintTextColor="@color/colorHint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFullName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:contentDescription="Unesite vaše ime i prezime" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Lokacija -->
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/TextInputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Lokacija"
+            app:hintTextColor="@color/colorHint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etLocation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:contentDescription="Unesite vašu lokaciju" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Tip korisnika -->
+        <RadioGroup
+            android:id="@+id/radioUserType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radioCustomer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kupac"
+                android:textColor="@color/white"
+                app:buttonTint="@color/colorPrimary" />
+
+            <com.google.android.material.radiobutton.MaterialRadioButton
+                android:id="@+id/radioCraftsman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Majstor"
+                android:textColor="@color/white"
+                app:buttonTint="@color/colorPrimary" />
+        </RadioGroup>
+
+        <!-- Specijalizacija -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/layoutSpecialization"
+            style="@style/TextInputStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:hint="Specijalizacija"
+            app:hintTextColor="@color/colorHint">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etSpecialization"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorText"
+                android:contentDescription="Unesite vašu specijalizaciju" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Dugme za dovršetak registracije -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCompleteRegistration"
+            style="@style/Widget.MaterialComponents.Button"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:text="Dovrši registraciju"
+            app:backgroundTint="@color/colorSecondary"
+            app:cornerRadius="8dp"
+            app:strokeColor="@color/colorPrimary"
+            app:strokeWidth="1dp"
+            android:textColor="@color/white" />
+
+    </LinearLayout>
+</ScrollView>

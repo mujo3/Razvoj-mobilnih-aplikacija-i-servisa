@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ImageView za prikaz slike usluge s manjom visinom -->
+        <!-- ImageView za prikaz slike usluge s fiksnom veličinom -->
         <ImageView
             android:id="@+id/ivServiceImage"
             android:layout_width="150sp"
@@ -46,7 +46,8 @@
             android:numStars="5"
             android:stepSize="0.5"
             android:rating="4.5"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            android:isIndicator="true"/>
 
         <!-- Ažurirani element za lokaciju -->
         <TextView
@@ -84,6 +85,5 @@
             android:layout_marginTop="16dp"
             android:backgroundTint="@color/colorAccent"
             android:textColor="@color/white"/>
-
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

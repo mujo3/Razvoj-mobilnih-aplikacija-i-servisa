@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">PronadjiMajstora</string>
     <string name="fab_profile_desc">Profil korisnika</string>
-    <string name="default_web_client_id">YOUR_CLIENT_ID_HERE</string>
+    <string name="default_web_client_id">228762122925-7fcdcm3j7eajfdlrauttd977g3rkco7h.apps.googleusercontent.com</string>
     <string name="category_label">Kategorija</string>
     <string name="category_hint">Odaberite kategoriju</string>
     <string name="category_placeholder">Sve kategorije</string>
