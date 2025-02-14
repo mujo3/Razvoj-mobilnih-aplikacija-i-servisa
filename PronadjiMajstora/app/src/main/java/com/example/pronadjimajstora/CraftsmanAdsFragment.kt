@@ -86,6 +86,9 @@ class CraftsmanAdsFragment : Fragment() {
                         Snackbar.make(binding.root, "Greška: ${error.message}", Snackbar.LENGTH_LONG).show()
                         return@addSnapshotListener
                     }
+                    // Provjera binding reference prije rada s njim
+                    if (_binding == null) return@addSnapshotListener
+
                     if (snapshot != null) {
                         ads.clear()
                         for (doc in snapshot.documents) {

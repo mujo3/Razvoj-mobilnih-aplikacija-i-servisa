@@ -21,6 +21,9 @@
 
         <!-- Input polja -->
         <item name="textInputStyle">@style/TextInputStyle</item>
+
+        <!-- Dodat stil za prilagođeni dialog -->
+        <item name="alertDialogTheme">@style/CustomDialogTheme</item>
     </style>
 
     <!-- Stil za filter dugmad -->
@@ -42,18 +45,8 @@
         <item name="android:textColor">@color/colorText</item>
     </style>
 
-    <!-- Dodajte ispod postojećih stilova -->
-    <style name="CustomDialogTheme" parent="Theme.MaterialComponents.DayNight.Dialog">
-        <item name="android:windowBackground">@color/colorSurface</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorSecondary">@color/colorSecondary</item>
-        <item name="android:textColorPrimary">@color/colorText</item>
-        <item name="buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
-    </style>
-
-    <style name="DialogButtonStyle" parent="Widget.MaterialComponents.Button">
-        <item name="backgroundTint">@color/colorSecondary</item>
-        <item name="android:textColor">@color/colorSurface</item>
-        <item name="cornerRadius">8dp</item>
+    <!-- Stil za prilagođeni dialog -->
+    <style name="CustomDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorPrimary">@color/customDialogTitleColor</item>
     </style>
 </resources>
