@@ -24,6 +24,9 @@ class ProfileSetupActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
+        // Provera da li je profil već podešen
+        checkUserProfile()
+
         // Postavi podatke dobivene iz prijave
         val email = intent.getStringExtra("email")
         val name = intent.getStringExtra("name")
@@ -52,6 +55,30 @@ class ProfileSetupActivity : AppCompatActivity() {
             if (validateInputs(fullName, location, specialization)) {
                 saveUserProfile(fullName, location, specialization)
             }
+        }
+    }
+
+    private fun checkUserProfile() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            firestore.collection("users").document(currentUser.uid).get()
+                .addOnSuccessListener { document ->
+                    if (document.exists() && document.getString("name") != null) {
+                        // Profil je već podešen, preusmeri na home ekran
+                        val userType = document.getString("userType") ?: "kupac"
+                        navigateToHome(userType)
+                    }
+                    // Ako profil nije podešen, nastavi sa inicijalizacijom
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(this, "Greška pri provjeri profila: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            // Korisnik nije prijavljen, preusmeri na LoginActivity
+            val intent = Intent(this, LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            startActivity(intent)
+            finish()
         }
     }
 
@@ -112,6 +139,7 @@ class ProfileSetupActivity : AppCompatActivity() {
         } else {
             Intent(this, HomeCustomerActivity::class.java)
         }
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         startActivity(intent)
         finish()
     }

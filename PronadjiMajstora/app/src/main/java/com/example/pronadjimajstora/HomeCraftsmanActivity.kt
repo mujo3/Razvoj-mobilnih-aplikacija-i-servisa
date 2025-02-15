@@ -20,6 +20,10 @@ class HomeCraftsmanActivity : AppCompatActivity() {
         setupBottomNavigation()
     }
 
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }
+
     private fun setupBottomNavigation() {
         binding.bottomNavigation.setOnItemSelectedListener { item ->
             when(item.itemId) {

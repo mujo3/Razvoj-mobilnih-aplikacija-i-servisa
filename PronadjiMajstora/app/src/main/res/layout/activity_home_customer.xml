@@ -13,8 +13,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        app:elevation="0dp"
-        android:fitsSystemWindows="true">
+        android:fitsSystemWindows="true"
+        app:elevation="0dp">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
@@ -26,8 +26,8 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="horizontal"
                 android:gravity="center_vertical"
+                android:orientation="horizontal"
                 android:paddingHorizontal="8dp">
 
                 <androidx.appcompat.widget.SearchView
@@ -37,7 +37,7 @@
                     android:layout_weight="1"
                     android:queryHint="Pretraži majstore..."
                     app:iconifiedByDefault="false"
-                    app:queryBackground="@android:color/transparent"/>
+                    app:queryBackground="@android:color/transparent" />
 
                 <ImageButton
                     android:id="@+id/btnFilter"
@@ -47,19 +47,24 @@
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:contentDescription="Filter"
                     android:src="@drawable/ic_filter"
-                    app:tint="@color/colorAccent"/>
+                    app:tint="@color/colorAccent" />
             </LinearLayout>
         </androidx.appcompat.widget.Toolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvServices"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="72dp"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvServices"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:padding="8dp" />
+    </androidx.core.widget.NestedScrollView>
 
     <TextView
         android:id="@+id/tvEmptyState"
@@ -67,7 +72,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:text="Nema pronađenih servisa"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabProfile"
@@ -78,5 +83,5 @@
         android:contentDescription="@string/fab_profile_desc"
         android:src="@drawable/ic_profile"
         app:backgroundTint="@color/colorSecondary"
-        app:tint="@color/colorSurface"/>
+        app:tint="@color/colorSurface" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

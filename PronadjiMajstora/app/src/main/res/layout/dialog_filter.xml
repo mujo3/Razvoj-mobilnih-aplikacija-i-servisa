@@ -1,55 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorSurface"
     android:fillViewport="true"
-    android:padding="16dp"
-    android:background="@color/colorSurface">
+    android:focusableInTouchMode="true"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="24dp">
 
-        <!-- Kategorija -->
         <TextView
             android:id="@+id/tvCategoryLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:text="Kategorija"
             android:textColor="@color/colorSecondary"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp"/>
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:hint="Odaberite kategoriju"
-            android:textColorHint="@color/colorTextSecondary">
+            android:textColorHint="@color/colorTextSecondary"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
             <com.google.android.material.textfield.MaterialAutoCompleteTextView
                 android:id="@+id/spinnerCategory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="none"
-                android:textColor="@color/colorText"
+                android:contentDescription="Odaberite kategoriju"
                 android:focusable="false"
-                android:contentDescription="Odaberite kategoriju"/>
+                android:inputType="none"
+                android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Lokacija -->
         <TextView
             android:id="@+id/tvLocationLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="4dp"
             android:text="Lokacija"
             android:textColor="@color/colorText"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="4dp"/>
+            android:textStyle="bold" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -60,48 +60,45 @@
                 android:id="@+id/etLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
+                android:contentDescription="Unesite lokaciju"
                 android:inputType="textCapWords"
-                android:contentDescription="Unesite lokaciju"/>
+                android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Cjenovni rang -->
         <TextView
             android:id="@+id/tvPriceLabel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:text="Maksimalna cijena"
             android:textColor="@color/colorText"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"/>
+            android:textStyle="bold" />
 
-        <!-- Prikaz odabrane maksimalne cijene -->
         <TextView
             android:id="@+id/tvMaxPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
             android:text="Maksimalna cijena: 5000 KM"
-            android:textColor="@color/colorText"
-            android:layout_marginBottom="4dp"/>
+            android:textColor="@color/colorText" />
 
         <SeekBar
             android:id="@+id/seekBarPrice"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:contentDescription="Odaberite maksimalnu cijenu"
             android:max="5000"
-            android:progress="5000"
-            android:contentDescription="Odaberite maksimalnu cijenu"/>
+            android:progress="5000" />
 
-        <!-- Dugme za primjenu filtera -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnApplyFilters"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:contentDescription="Primijeni odabrane filtere"
             android:text="Primijeni filtere"
-            app:backgroundTint="@color/colorSecondary"
             android:textColor="@color/white"
-            app:cornerRadius="8dp"
-            android:contentDescription="Primijeni odabrane filtere"/>
+            app:backgroundTint="@color/colorSecondary"
+            app:cornerRadius="8dp" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

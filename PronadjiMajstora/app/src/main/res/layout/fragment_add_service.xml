@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
+    android:focusableInTouchMode="true"
     tools:context=".AddServiceFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:paddingBottom="72dp">
 
         <com.google.android.material.textfield.TextInputLayout
             style="@style/TextInputStyle"
@@ -24,7 +26,7 @@
                 android:id="@+id/etTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Naslov usluge"/>
+                android:hint="Naslov usluge" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -38,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Opis usluge"
-                android:inputType="textMultiLine"/>
+                android:inputType="textMultiLine" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -52,7 +54,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Cijena (KM)"
-                android:inputType="numberDecimal"/>
+                android:inputType="numberDecimal" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -61,7 +63,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Dodaj sliku"/>
+            android:text="Dodaj sliku" />
 
         <ImageView
             android:id="@+id/ivServiceImage"
@@ -70,21 +72,20 @@
             android:layout_gravity="center"
             android:layout_marginBottom="8dp"
             android:contentDescription="Slika usluge"
-            android:src="@drawable/ic_add_photo"/>
+            android:src="@drawable/ic_add_photo" />
 
         <TextView
             android:id="@+id/tvFileName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSubmit"
             style="@style/FilterButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Dodaj uslugu"/>
-
+            android:text="Dodaj uslugu" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

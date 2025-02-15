@@ -1,32 +1,29 @@
 package com.example.pronadjimajstora
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.widget.SeekBar
+import android.widget.TextView
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
-import android.widget.SeekBar
-import android.widget.TextView
 import com.google.firebase.firestore.FirebaseFirestore
 
 class FilterDialogFragment : DialogFragment() {
-
     interface FilterListener {
         fun onFiltersApplied(category: String, location: String, maxPrice: Double)
     }
 
     private var listener: FilterListener? = null
-
     private lateinit var spinnerCategory: MaterialAutoCompleteTextView
     private lateinit var etLocation: TextInputEditText
     private lateinit var seekBarPrice: SeekBar
     private lateinit var tvMaxPrice: TextView
-    private lateinit var btnApplyFilters: MaterialButton
 
     fun setFilterListener(listener: FilterListener) {
         this.listener = listener
@@ -37,89 +34,81 @@ class FilterDialogFragment : DialogFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        return inflater.inflate(R.layout.dialog_filter, container, false)
+        return inflater.inflate(R.layout.dialog_filter, container, false).apply {
+            viewTreeObserver.addOnGlobalLayoutListener {
+                val rect = Rect()
+                getWindowVisibleDisplayFrame(rect)
+                val screenHeight = rootView.height
+                val keypadHeight = screenHeight - rect.bottom
+                if (keypadHeight > screenHeight * 0.15) {
+                    scrollTo(0, keypadHeight)
+                }
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeViews(view)
+        setupCategorySpinner()
+        setupSeekBar()
+        setupApplyButton()
+    }
 
-        // Inicijalizacija UI komponenti
+    private fun initializeViews(view: View) {
         spinnerCategory = view.findViewById(R.id.spinnerCategory)
         etLocation = view.findViewById(R.id.etLocation)
         seekBarPrice = view.findViewById(R.id.seekBarPrice)
         tvMaxPrice = view.findViewById(R.id.tvMaxPrice)
-        btnApplyFilters = view.findViewById(R.id.btnApplyFilters)
-
-        fetchSpecializations()
-        setupSeekBar()
-
-        btnApplyFilters.setOnClickListener {
-            applyFilters()
-        }
     }
 
-    private fun fetchSpecializations() {
-        val firestore = FirebaseFirestore.getInstance()
-        firestore.collection("services")
+    private fun setupCategorySpinner() {
+        FirebaseFirestore.getInstance().collection("services")
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                val specializationsSet = mutableSetOf<String>()
-                for (document in querySnapshot.documents) {
-                    val specialization = document.getString("specialization")
-                    if (!specialization.isNullOrEmpty()) {
-                        specializationsSet.add(specialization)
+            .addOnSuccessListener { result ->
+                val categories = mutableSetOf<String>().apply {
+                    add("Sve kategorije")
+                    result.documents.forEach { doc ->
+                        doc.getString("specialization")?.let { add(it) }
                     }
+                }.toList().sorted()
+
+                ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories).also {
+                    spinnerCategory.setAdapter(it)
                 }
-                val categories = specializationsSet.toList().sorted()
-                setupCategorySpinner(categories)
             }
-            .addOnFailureListener { exception ->
-                Toast.makeText(requireContext(), "Greška pri dohvaćanju kategorija: ${exception.message}", Toast.LENGTH_LONG).show()
-            }
-    }
-
-    private fun setupCategorySpinner(categories: List<String>) {
-        val allCategories = mutableListOf("Sve kategorije")
-        allCategories.addAll(categories)
-
-        val adapter = ArrayAdapter(
-            requireContext(),
-            android.R.layout.simple_dropdown_item_1line,
-            allCategories
-        )
-
-        spinnerCategory.setAdapter(adapter)
-        spinnerCategory.setOnItemClickListener { _, _, position, _ ->
-            spinnerCategory.setText(allCategories[position], false)
-            spinnerCategory.contentDescription = "Odabrana kategorija: ${allCategories[position]}"
-        }
     }
 
     private fun setupSeekBar() {
         seekBarPrice.max = 5000
-        seekBarPrice.progress = 2500
-        tvMaxPrice.text = "Maksimalna cijena: ${seekBarPrice.progress} KM"
+        seekBarPrice.progress = 5000
+        updatePriceText(5000)
 
         seekBarPrice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                tvMaxPrice.text = "Maksimalna cijena: $progress KM"
+                updatePriceText(progress)
             }
-
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
     }
 
+    private fun updatePriceText(progress: Int) {
+        tvMaxPrice.text = "Maksimalna cijena: $progress KM"
+    }
+
+    private fun setupApplyButton() {
+        view?.findViewById<MaterialButton>(R.id.btnApplyFilters)?.setOnClickListener {
+            applyFilters()
+        }
+    }
+
     private fun applyFilters() {
-        val selectedCategory = spinnerCategory.text.toString()
+        val category = spinnerCategory.text.toString().takeIf { it.isNotBlank() } ?: "Sve kategorije"
         val location = etLocation.text.toString()
         val maxPrice = seekBarPrice.progress.toDouble()
 
-        listener?.onFiltersApplied(
-            if (selectedCategory.isEmpty()) "Sve kategorije" else selectedCategory,
-            location,
-            if (maxPrice == 0.0) 5000.0 else maxPrice
-        )
+        listener?.onFiltersApplied(category, location, maxPrice)
         dismiss()
     }
 }

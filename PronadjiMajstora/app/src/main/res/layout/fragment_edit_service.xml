@@ -37,8 +37,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Naziv usluge"
+            android:textColorHint="@color/colorTextSecondary"
             android:textSize="18sp"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"/>
 
         <!-- Opis usluge -->
         <EditText
@@ -46,6 +47,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Opis usluge"
+            android:textColorHint="@color/colorTextSecondary"
             android:minLines="3"
             android:gravity="top"
             android:inputType="textMultiLine"
@@ -57,6 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Cijena usluge"
+            android:textColorHint="@color/colorTextSecondary"
             android:inputType="numberDecimal"
             android:layout_marginTop="8dp" />
 

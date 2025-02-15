@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pronadjimajstora.databinding.ActivityHomeCustomerBinding
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -38,6 +37,9 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
         fetchServicesFromFirestore()
     }
 
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }
 
     private fun setupRecyclerView() {
         binding.rvServices.layoutManager = LinearLayoutManager(this)

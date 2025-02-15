@@ -1,6 +1,7 @@
 package com.example.pronadjimajstora
 
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,21 @@ class LoginActivity : AppCompatActivity() {
         setupClickListeners()
     }
 
+    private fun setupKeyboardListener() {
+        val rootView = window.decorView.rootView
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+            if (keypadHeight > screenHeight * 0.15) {
+                binding.root.scrollTo(0, keypadHeight)
+            }
+        }
+    }
+    override fun onBackPressed() {
+        moveTaskToBack(true)
+    }
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()

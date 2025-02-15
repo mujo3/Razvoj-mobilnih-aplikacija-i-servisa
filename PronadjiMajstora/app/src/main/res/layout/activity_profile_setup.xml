@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorBackground"
-    android:padding="16dp"
     android:fillViewport="true"
+    android:focusableInTouchMode="true"
+    android:padding="16dp"
     tools:context=".ProfileSetupActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="72dp">
 
         <!-- Ime i prezime -->
         <com.google.android.material.textfield.TextInputLayout
@@ -29,8 +31,8 @@
                 android:id="@+id/etFullName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:contentDescription="Unesite vaše ime i prezime" />
+                android:contentDescription="Unesite vaše ime i prezime"
+                android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Lokacija -->
@@ -46,8 +48,8 @@
                 android:id="@+id/etLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:contentDescription="Unesite vašu lokaciju" />
+                android:contentDescription="Unesite vašu lokaciju"
+                android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Tip korisnika -->
@@ -55,9 +57,9 @@
             android:id="@+id/radioUserType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
             android:layout_marginBottom="16dp"
-            android:orientation="vertical"
-            android:layout_gravity="center_horizontal">
+            android:orientation="vertical">
 
             <com.google.android.material.radiobutton.MaterialRadioButton
                 android:id="@+id/radioCustomer"
@@ -82,16 +84,16 @@
             style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:hint="Specijalizacija"
+            android:visibility="gone"
             app:hintTextColor="@color/colorHint">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etSpecialization"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@color/colorText"
-                android:contentDescription="Unesite vašu specijalizaciju" />
+                android:contentDescription="Unesite vašu specijalizaciju"
+                android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- Dugme za dovršetak registracije -->
@@ -102,10 +104,10 @@
             android:layout_height="48dp"
             android:layout_marginTop="24dp"
             android:text="Dovrši registraciju"
+            android:textColor="@color/white"
             app:backgroundTint="@color/colorSecondary"
             app:cornerRadius="8dp"
             app:strokeColor="@color/colorPrimary"
-            app:strokeWidth="1dp"
-            android:textColor="@color/white" />
+            app:strokeWidth="1dp" />
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

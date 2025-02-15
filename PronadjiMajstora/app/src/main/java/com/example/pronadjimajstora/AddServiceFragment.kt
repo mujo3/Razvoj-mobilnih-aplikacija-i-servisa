@@ -1,5 +1,6 @@
 package com.example.pronadjimajstora
 
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,14 +10,18 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import com.example.pronadjimajstora.databinding.FragmentAddServiceBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 
 class AddServiceFragment : Fragment() {
     private var _binding: FragmentAddServiceBinding? = null
     private val binding get() = _binding!!
     private var imageUri: Uri? = null
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var auth: FirebaseAuth
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -24,9 +29,6 @@ class AddServiceFragment : Fragment() {
             binding.ivServiceImage.setImageURI(it)
         }
     }
-
-    private lateinit var firestore: FirebaseFirestore
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -41,7 +43,21 @@ class AddServiceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupKeyboardListener()
         setupUI()
+    }
+
+    private fun setupKeyboardListener() {
+        val rootView = binding.root
+        rootView.viewTreeObserver.addOnGlobalLayoutListener {
+            val rect = Rect()
+            rootView.getWindowVisibleDisplayFrame(rect)
+            val screenHeight = rootView.height
+            val keypadHeight = screenHeight - rect.bottom
+            if (keypadHeight > screenHeight * 0.15) {
+                rootView.scrollTo(0, keypadHeight)
+            }
+        }
     }
 
     private fun setupUI() {
@@ -53,141 +69,96 @@ class AddServiceFragment : Fragment() {
             if (validateInputs()) {
                 val currentUserUid = auth.currentUser?.uid
                 if (currentUserUid == null) {
-                    Snackbar.make(binding.root, "Korisnik nije prijavljen", Snackbar.LENGTH_LONG).show()
+                    showError("Korisnik nije prijavljen")
                     return@setOnClickListener
                 }
-                firestore.collection("users").document(currentUserUid)
-                    .get()
-                    .addOnSuccessListener { document ->
-                        if (document.exists()) {
-                            val craftsmanName = document.getString("name") ?: "Nepoznato"
-                            val craftsmanLocation = document.getString("location") ?: "Nepoznato"
-                            val craftsmanRating = document.getDouble("rating")?.toFloat() ?: 0f
-                            val craftsmanSpecialization = document.getString("specialization") ?: "Nepoznato"
-
-                            if (imageUri != null) {
-                                uploadImageAndCreateService(
-                                    craftsmanName,
-                                    craftsmanLocation,
-                                    craftsmanRating,
-                                    craftsmanSpecialization
-                                )
-                            } else {
-                                val defaultImageMarker = "default"
-                                val newService = createService(
-                                    craftsmanName,
-                                    craftsmanLocation,
-                                    craftsmanRating,
-                                    craftsmanSpecialization,
-                                    defaultImageMarker
-                                )
-                                saveServiceToFirestore(newService)
-                            }
-                        } else {
-                            Snackbar.make(binding.root, "Korisnički podaci nisu dostupni", Snackbar.LENGTH_LONG).show()
-                        }
-                    }
-                    .addOnFailureListener { e ->
-                        Snackbar.make(binding.root, "Greška pri dohvaćanju korisničkih podataka: ${e.message}", Snackbar.LENGTH_LONG).show()
-                    }
+                processServiceCreation(currentUserUid)
             }
         }
     }
 
-    private fun validateInputs(): Boolean {
-        val title = binding.etTitle.text.toString()
-        val description = binding.etDescription.text.toString()
-        val priceText = binding.etPrice.text.toString()
-
-        return when {
-            title.isEmpty() -> {
-                binding.etTitle.error = "Unesite naslov"
-                false
-            }
-            description.isEmpty() -> {
-                binding.etDescription.error = "Unesite opis"
-                false
-            }
-            priceText.isEmpty() -> {
-                binding.etPrice.error = "Unesite cijenu"
-                false
-            }
-            else -> {
-                try {
-                    priceText.toDouble()
-                    true
-                } catch (e: NumberFormatException) {
-                    binding.etPrice.error = "Cijena mora biti validan broj"
-                    false
+    private fun processServiceCreation(uid: String) {
+        firestore.collection("users").document(uid).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val craftsmanData = getCraftsmanData(document)
+                    imageUri?.let { uri ->
+                        uploadImageAndCreateService(craftsmanData, uri)
+                    } ?: createServiceWithDefaultImage(craftsmanData)
+                } else {
+                    showError("Korisnički podaci nisu dostupni")
                 }
             }
-        }
+            .addOnFailureListener { e ->
+                showError("Greška pri dohvaćanju podataka: ${e.message}")
+            }
     }
 
-    private fun createService(
-        craftsmanName: String,
-        craftsmanLocation: String,
-        craftsmanRating: Float,
-        craftsmanSpecialization: String,
-        imageUrl: String
-    ): Service {
-        return Service(
-            name = binding.etTitle.text.toString(),
-            specialization = craftsmanSpecialization, // Koristimo polje 'specialization' kao kategoriju
-            craftsman = craftsmanName,
-            rating = craftsmanRating,
-            location = craftsmanLocation,
-            price = binding.etPrice.text.toString().toDouble(),
-            description = binding.etDescription.text.toString(),
-            imageUrl = imageUrl
+    private fun getCraftsmanData(document: DocumentSnapshot): CraftsmanData {
+        return CraftsmanData(
+            name = document.getString("name") ?: "Nepoznato",
+            location = document.getString("location") ?: "Nepoznato",
+            rating = document.getDouble("rating")?.toFloat() ?: 0f,
+            specialization = document.getString("specialization") ?: "Nepoznato"
         )
     }
 
-    private fun uploadImageAndCreateService(
-        craftsmanName: String,
-        craftsmanLocation: String,
-        craftsmanRating: Float,
-        craftsmanSpecialization: String
-    ) {
-        val storageRef = FirebaseStorage.getInstance().reference.child("service_images/${System.currentTimeMillis()}.jpg")
-        imageUri?.let { uri ->
-            storageRef.putFile(uri)
-                .addOnSuccessListener {
-                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        val imageUrl = downloadUri.toString()
-                        val newService = createService(
-                            craftsmanName,
-                            craftsmanLocation,
-                            craftsmanRating,
-                            craftsmanSpecialization,
-                            imageUrl
-                        )
-                        saveServiceToFirestore(newService)
-                    }
-                }
-                .addOnFailureListener { e ->
-                    Snackbar.make(binding.root, "Greška pri uploadu slike: ${e.message}", Snackbar.LENGTH_LONG).show()
-                }
+    private fun validateInputs(): Boolean {
+        return validateField(binding.etTitle.text.toString(), binding.etTitle, "Naslov") &&
+                validateField(binding.etDescription.text.toString(), binding.etDescription, "Opis") &&
+                validatePrice(binding.etPrice.text.toString())
+    }
+
+    private fun validateField(value: String, view: View, fieldName: String): Boolean {
+        if (value.isEmpty()) {
+            if (view is TextInputEditText) view.error = "Unesite $fieldName"
+            return false
+        }
+        return true
+    }
+
+    private fun validatePrice(price: String): Boolean {
+        return try {
+            price.toDouble()
+            true
+        } catch (e: NumberFormatException) {
+            binding.etPrice.error = "Nevažeći format cijene"
+            false
         }
     }
 
-    private fun saveServiceToFirestore(service: Service) {
-        val documentRef = firestore.collection("services").document()
-        val serviceWithId = service.copy(id = documentRef.id)
-        documentRef.set(serviceWithId)
+    private fun uploadImageAndCreateService(data: CraftsmanData, uri: Uri) {
+        val storageRef = FirebaseStorage.getInstance().reference
+            .child("service_images/${System.currentTimeMillis()}.jpg")
+
+        storageRef.putFile(uri)
+            .addOnSuccessListener {
+                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    saveService(data.copy(imageUrl = downloadUri.toString()))
+                }
+            }
+            .addOnFailureListener { e ->
+                showError("Greška pri uploadu slike: ${e.message}")
+            }
+    }
+
+    private fun createServiceWithDefaultImage(data: CraftsmanData) {
+        saveService(data.copy(imageUrl = "default"))
+    }
+
+    private fun saveService(data: CraftsmanData) {
+        firestore.collection("services").add(data.toMap())
             .addOnSuccessListener {
                 showConfirmation()
                 clearForm()
             }
             .addOnFailureListener { e ->
-                Snackbar.make(binding.root, "Greška: ${e.message}", Snackbar.LENGTH_LONG).show()
+                showError("Greška pri spremanju: ${e.message}")
             }
     }
 
     private fun showConfirmation() {
-        Snackbar.make(binding.root, "Usluga uspješno dodana!", Snackbar.LENGTH_LONG)
-            .setAction("OK") {}
-            .show()
+        Snackbar.make(binding.root, "Usluga uspješno dodana!", Snackbar.LENGTH_LONG).show()
     }
 
     private fun clearForm() {
@@ -200,11 +171,32 @@ class AddServiceFragment : Fragment() {
         }
     }
 
+    private fun showError(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
     }
 
+    data class CraftsmanData(
+        val name: String,
+        val location: String,
+        val rating: Float,
+        val specialization: String,
+        val imageUrl: String = "default"
+    ) {
+        fun toMap(): Map<String, Any> {
+            return mapOf(
+                "name" to name,
+                "location" to location,
+                "rating" to rating,
+                "specialization" to specialization,
+                "imageUrl" to imageUrl
+            )
+        }
+    }
     companion object {
         fun newInstance() = AddServiceFragment()
     }
