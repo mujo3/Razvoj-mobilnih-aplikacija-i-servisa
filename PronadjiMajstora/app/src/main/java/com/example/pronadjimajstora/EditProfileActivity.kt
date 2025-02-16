@@ -2,8 +2,10 @@ package com.example.pronadjimajstora
 
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.example.pronadjimajstora.databinding.ActivityEditProfileBinding
@@ -12,13 +14,18 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 
 class EditProfileActivity : AppCompatActivity() {
+
     private lateinit var binding: ActivityEditProfileBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    private val getImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let { uploadImage(it) }
-    }
+    // Koristimo ProfileViewModel za očuvanje stanja unosa
+    private val profileViewModel: ProfileViewModel by viewModels()
+
+    private val getImageLauncher =
+        registerForActivityResult(androidx.activity.result.contract.ActivityResultContracts.GetContent()) { uri: Uri? ->
+            uri?.let { uploadImage(it) }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,6 +37,7 @@ class EditProfileActivity : AppCompatActivity() {
 
         setupUI()
         populateFields()
+        setupTextWatchers()
     }
 
     private fun setupUI() {
@@ -49,11 +57,25 @@ class EditProfileActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     document?.let {
-                        binding.etName.setText(it.getString("name"))
-                        binding.etEmail.setText(it.getString("email"))
-                        binding.etLocation.setText(it.getString("location"))
+                        // Ako ViewModel još nema vrijednosti, postavljamo ih iz Firestore-a
+                        if (profileViewModel.name.value.isNullOrEmpty()) {
+                            profileViewModel.setName(it.getString("name") ?: "")
+                        }
+                        if (profileViewModel.email.value.isNullOrEmpty()) {
+                            profileViewModel.setEmail(it.getString("email") ?: "")
+                        }
+                        if (profileViewModel.location.value.isNullOrEmpty()) {
+                            profileViewModel.setLocation(it.getString("location") ?: "")
+                        }
+                        if (profileViewModel.profilePicUrl.value.isNullOrEmpty()) {
+                            profileViewModel.setProfilePicUrl(it.getString("profilePicUrl") ?: "")
+                        }
 
-                        val profilePicUrl = it.getString("profilePicUrl")
+                        binding.etName.setText(profileViewModel.name.value)
+                        binding.etEmail.setText(profileViewModel.email.value)
+                        binding.etLocation.setText(profileViewModel.location.value)
+
+                        val profilePicUrl = profileViewModel.profilePicUrl.value
                         if (!profilePicUrl.isNullOrEmpty()) {
                             Glide.with(this).load(profilePicUrl).into(binding.ivProfilePicture)
                         }
@@ -62,13 +84,39 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupTextWatchers() {
+        binding.etName.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                profileViewModel.setName(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                profileViewModel.setEmail(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+
+        binding.etLocation.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                profileViewModel.setLocation(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+    }
+
     private fun saveProfileChanges() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val updates = hashMapOf<String, Any>(
-                "name" to binding.etName.text.toString(),
-                "email" to binding.etEmail.text.toString(),
-                "location" to binding.etLocation.text.toString()
+                "name" to profileViewModel.name.value.orEmpty(),
+                "email" to profileViewModel.email.value.orEmpty(),
+                "location" to profileViewModel.location.value.orEmpty()
             )
 
             firestore.collection("users").document(currentUser.uid)
@@ -89,6 +137,7 @@ class EditProfileActivity : AppCompatActivity() {
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
                     val downloadUrl = downloadUri.toString()
+                    profileViewModel.setProfilePicUrl(downloadUrl)
                     firestore.collection("users").document(userId)
                         .update("profilePicUrl", downloadUrl)
                         .addOnSuccessListener {

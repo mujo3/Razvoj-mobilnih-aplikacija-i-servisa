@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
@@ -16,16 +17,14 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 
 class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterListener {
+
     private lateinit var binding: ActivityHomeCustomerBinding
     private lateinit var serviceAdapter: ServiceAdapter
     private var serviceList = mutableListOf<Service>()
     private val db: FirebaseFirestore = Firebase.firestore
 
-    // Filter i pretraga varijable
-    private var currentCategoryFilter = "Sve kategorije"
-    private var currentLocationFilter = ""
-    private var currentMaxPriceFilter = 5000.0
-    private var currentSearchQuery = ""
+    // Koristimo FilterViewModel za dijeljenje stanja (filteri i search query)
+    private val filterViewModel: FilterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,6 +36,12 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
         setupProfileButton()
         setupSearchView()
         fetchServicesFromFirestore()
+
+        // Promatraj promjene u filterima i search queryju – primjeni filtriranje kad god se promijene
+        filterViewModel.category.observe(this) { applyAllFilters() }
+        filterViewModel.location.observe(this) { applyAllFilters() }
+        filterViewModel.maxPrice.observe(this) { applyAllFilters() }
+        filterViewModel.searchQuery.observe(this) { applyAllFilters() }
     }
 
     override fun onBackPressed() {
@@ -96,28 +101,33 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
             override fun onQueryTextSubmit(query: String?) = false
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                currentSearchQuery = newText?.trim().orEmpty()
-                applyAllFilters()
+                filterViewModel.setSearchQuery(newText?.trim().orEmpty())
                 return true
             }
         })
-        val searchEditText = binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+        val searchEditText =
+            binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
         searchEditText.setTextColor(ContextCompat.getColor(this, android.R.color.black))
         searchEditText.setHintTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
     }
 
     override fun onFiltersApplied(category: String, location: String, maxPrice: Double) {
-        currentCategoryFilter = category
-        currentLocationFilter = location.trim()
-        currentMaxPriceFilter = maxPrice
-        applyAllFilters()
+        // Ažuriramo ViewModel – observeri će automatski pozvati applyAllFilters()
+        filterViewModel.setCategory(category)
+        filterViewModel.setLocation(location.trim())
+        filterViewModel.setMaxPrice(maxPrice.toInt())
     }
 
     private fun applyAllFilters() {
+        val currentCategory = filterViewModel.category.value ?: "Sve kategorije"
+        val currentLocation = filterViewModel.location.value ?: ""
+        val currentMaxPrice = filterViewModel.maxPrice.value ?: 5000
+        val currentSearchQuery = filterViewModel.searchQuery.value ?: ""
+
         val filteredList = serviceList.filter { service ->
-            (currentCategoryFilter == "Sve kategorije" || service.specialization.equals(currentCategoryFilter, true)) &&
-                    (currentLocationFilter.isEmpty() || service.location.contains(currentLocationFilter, true)) &&
-                    (service.price <= currentMaxPriceFilter) &&
+            (currentCategory == "Sve kategorije" || service.specialization.equals(currentCategory, true)) &&
+                    (currentLocation.isEmpty() || service.location.contains(currentLocation, true)) &&
+                    (service.price <= currentMaxPrice) &&
                     (currentSearchQuery.isEmpty() ||
                             service.name.contains(currentSearchQuery, true) ||
                             service.location.contains(currentSearchQuery, true) ||
