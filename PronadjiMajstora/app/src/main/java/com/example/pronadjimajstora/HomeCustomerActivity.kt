@@ -4,9 +4,11 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.pronadjimajstora.databinding.ActivityHomeCustomerBinding
 import com.google.firebase.firestore.FirebaseFirestore
@@ -99,12 +101,15 @@ class HomeCustomerActivity : AppCompatActivity(), FilterDialogFragment.FilterLis
                 return true
             }
         })
+        val searchEditText = binding.searchView.findViewById<EditText>(androidx.appcompat.R.id.search_src_text)
+        searchEditText.setTextColor(ContextCompat.getColor(this, android.R.color.black))
+        searchEditText.setHintTextColor(ContextCompat.getColor(this, android.R.color.darker_gray))
     }
 
     override fun onFiltersApplied(category: String, location: String, maxPrice: Double) {
         currentCategoryFilter = category
         currentLocationFilter = location.trim()
-        currentMaxPriceFilter = if (maxPrice == 0.0) 5000.0 else maxPrice
+        currentMaxPriceFilter = maxPrice
         applyAllFilters()
     }
 

@@ -35,7 +35,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:queryHint="Pretraži majstore..."
+                    app:queryHint="Pretražite oglase"
                     app:iconifiedByDefault="false"
                     app:queryBackground="@android:color/transparent" />
 

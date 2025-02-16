@@ -80,7 +80,7 @@ class FilterDialogFragment : DialogFragment() {
         savedInstanceState?.let {
             savedCategory = it.getString("FILTER_CATEGORY")
             savedLocation = it.getString("FILTER_LOCATION")
-            savedMaxPrice = it.getInt("FILTER_MAX_PRICE", 1000)
+            savedMaxPrice = it.getInt("FILTER_MAX_PRICE", 5000)
             etLocation.setText(savedLocation)
             seekBarPrice.progress = savedMaxPrice
             updatePriceText(savedMaxPrice)
@@ -107,12 +107,14 @@ class FilterDialogFragment : DialogFragment() {
         FirebaseFirestore.getInstance().collection("services")
             .get()
             .addOnSuccessListener { result ->
-                val categories = mutableSetOf<String>().apply {
-                    add("Sve kategorije")
-                    result.documents.forEach { doc ->
-                        doc.getString("specialization")?.let { add(it) }
-                    }
-                }.toList().sorted()
+                // Izvlačenje specijalizacija iz Firestore i sortiranje po abecedi
+                val specializations = result.documents.mapNotNull { doc ->
+                    doc.getString("specialization")
+                }.distinct().sorted()
+
+                // Kreiramo listu gdje je "Sve kategorije" uvijek prvi element
+                val categories = mutableListOf("Sve kategorije")
+                categories.addAll(specializations)
 
                 val adapter = ArrayAdapter(
                     requireContext(),

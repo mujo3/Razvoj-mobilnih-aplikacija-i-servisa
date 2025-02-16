@@ -27,6 +27,16 @@
         <item name="alertDialogTheme">@style/CustomDialogTheme</item>
     </style>
 
+
+
+    <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
+        <item name="android:textColorHint">@color/colorTextSecondary</item>
+        <item name="queryHint">Pretražite oglase</item>
+        <item name="android:textColor">@color/colorTextSecondary</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
+
+
     <!-- Stil za filter dugmad -->
     <style name="FilterButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">@color/colorText</item>
