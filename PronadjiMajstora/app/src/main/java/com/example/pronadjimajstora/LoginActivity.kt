@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
             rootView.getWindowVisibleDisplayFrame(rect)
             val screenHeight = rootView.height
             val keypadHeight = screenHeight - rect.bottom
-            if (keypadHeight > screenHeight * 0.15) {
+            if (keypadHeight > screenHeight * 0.3) {
                 binding.root.scrollTo(0, keypadHeight)
             }
         }

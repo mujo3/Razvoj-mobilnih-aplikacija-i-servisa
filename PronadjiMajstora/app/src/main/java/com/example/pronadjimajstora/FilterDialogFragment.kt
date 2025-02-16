@@ -15,6 +15,7 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
 
 class FilterDialogFragment : DialogFragment() {
+
     interface FilterListener {
         fun onFiltersApplied(category: String, location: String, maxPrice: Double)
     }
@@ -24,6 +25,11 @@ class FilterDialogFragment : DialogFragment() {
     private lateinit var etLocation: TextInputEditText
     private lateinit var seekBarPrice: SeekBar
     private lateinit var tvMaxPrice: TextView
+
+    // Varijable za privremeno čuvanje filtera
+    private var savedCategory: String? = null
+    private var savedLocation: String? = null
+    private var savedMaxPrice: Int = 5000
 
     fun setFilterListener(listener: FilterListener) {
         this.listener = listener
@@ -50,9 +56,44 @@ class FilterDialogFragment : DialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeViews(view)
+        setupApplyButton()
+
+        // Ako postoji spremljeno stanje, dohvatimo filtere
+        if (savedInstanceState != null) {
+            savedCategory = savedInstanceState.getString("FILTER_CATEGORY")
+            savedLocation = savedInstanceState.getString("FILTER_LOCATION")
+            savedMaxPrice = savedInstanceState.getInt("FILTER_MAX_PRICE", 5000)
+        }
+
         setupCategorySpinner()
         setupSeekBar()
-        setupApplyButton()
+
+        // Vraćamo unesenu lokaciju (ako postoji)
+        savedLocation?.let {
+            etLocation.setText(it)
+        }
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        // Dodatno vraćanje stanja – osigurava da su podaci postavljeni nakon što je view u potpunosti kreiran
+        savedInstanceState?.let {
+            savedCategory = it.getString("FILTER_CATEGORY")
+            savedLocation = it.getString("FILTER_LOCATION")
+            savedMaxPrice = it.getInt("FILTER_MAX_PRICE", 1000)
+            etLocation.setText(savedLocation)
+            seekBarPrice.progress = savedMaxPrice
+            updatePriceText(savedMaxPrice)
+            // Spinner ćemo postaviti u adapter callbacku
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Spremamo trenutno stanje filtera
+        outState.putString("FILTER_CATEGORY", spinnerCategory.text.toString())
+        outState.putString("FILTER_LOCATION", etLocation.text.toString())
+        outState.putInt("FILTER_MAX_PRICE", seekBarPrice.progress)
     }
 
     private fun initializeViews(view: View) {
@@ -73,23 +114,31 @@ class FilterDialogFragment : DialogFragment() {
                     }
                 }.toList().sorted()
 
-                ArrayAdapter(requireContext(), android.R.layout.simple_dropdown_item_1line, categories).also {
-                    spinnerCategory.setAdapter(it)
+                val adapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_dropdown_item_1line,
+                    categories
+                )
+                spinnerCategory.setAdapter(adapter)
+                // Ako postoji spremljena kategorija, postavljamo ju
+                savedCategory?.let { category ->
+                    spinnerCategory.setText(category, false)
                 }
             }
     }
 
     private fun setupSeekBar() {
         seekBarPrice.max = 5000
-        seekBarPrice.progress = 5000
-        updatePriceText(5000)
+        val initialProgress = if (savedMaxPrice != 0) savedMaxPrice else 5000
+        seekBarPrice.progress = initialProgress
+        updatePriceText(initialProgress)
 
         seekBarPrice.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 updatePriceText(progress)
             }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            override fun onStartTrackingTouch(seekBar: SeekBar?) { }
+            override fun onStopTrackingTouch(seekBar: SeekBar?) { }
         })
     }
 
