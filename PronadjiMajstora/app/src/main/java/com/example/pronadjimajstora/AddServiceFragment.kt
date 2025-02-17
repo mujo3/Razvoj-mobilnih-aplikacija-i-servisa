@@ -3,18 +3,22 @@ package com.example.pronadjimajstora
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.example.pronadjimajstora.databinding.FragmentAddServiceBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.example.pronadjimajstora.CraftsmanData  // Uvoz nove klase
 
 class AddServiceFragment : Fragment() {
     private var _binding: FragmentAddServiceBinding? = null
@@ -22,6 +26,9 @@ class AddServiceFragment : Fragment() {
     private var imageUri: Uri? = null
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
+
+    // Koristimo AddServiceViewModel za čuvanje unosa (npr. naslov, opis, cijena, URL slike)
+    private val viewModel: AddServiceViewModel by viewModels()
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
         uri?.let {
@@ -44,7 +51,25 @@ class AddServiceFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupKeyboardListener()
+        setupTextWatchers()
+        restoreFields()
         setupUI()
+    }
+
+    private fun setupUI() {
+        binding.btnAddImage.setOnClickListener {
+            pickImage.launch("image/*")
+        }
+        binding.btnSubmit.setOnClickListener {
+            if (validateInputs()) {
+                val currentUserUid = auth.currentUser?.uid
+                if (currentUserUid == null) {
+                    showError("Korisnik nije prijavljen")
+                    return@setOnClickListener
+                }
+                processServiceCreation(currentUserUid)
+            }
+        }
     }
 
     private fun setupKeyboardListener() {
@@ -60,47 +85,37 @@ class AddServiceFragment : Fragment() {
         }
     }
 
-    private fun setupUI() {
-        binding.btnAddImage.setOnClickListener {
-            pickImage.launch("image/*")
-        }
-
-        binding.btnSubmit.setOnClickListener {
-            if (validateInputs()) {
-                val currentUserUid = auth.currentUser?.uid
-                if (currentUserUid == null) {
-                    showError("Korisnik nije prijavljen")
-                    return@setOnClickListener
-                }
-                processServiceCreation(currentUserUid)
+    private fun setupTextWatchers() {
+        binding.etTitle.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setTitle(s.toString())
             }
-        }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
+        binding.etDescription.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setDescription(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
+        binding.etPrice.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setPrice(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
     }
 
-    private fun processServiceCreation(uid: String) {
-        firestore.collection("users").document(uid).get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
-                    val craftsmanData = getCraftsmanData(document)
-                    imageUri?.let { uri ->
-                        uploadImageAndCreateService(craftsmanData, uri)
-                    } ?: createServiceWithDefaultImage(craftsmanData)
-                } else {
-                    showError("Korisnički podaci nisu dostupni")
-                }
-            }
-            .addOnFailureListener { e ->
-                showError("Greška pri dohvaćanju podataka: ${e.message}")
-            }
-    }
-
-    private fun getCraftsmanData(document: DocumentSnapshot): CraftsmanData {
-        return CraftsmanData(
-            name = document.getString("name") ?: "Nepoznato",
-            location = document.getString("location") ?: "Nepoznato",
-            rating = document.getDouble("rating")?.toFloat() ?: 0f,
-            specialization = document.getString("specialization") ?: "Nepoznato"
-        )
+    private fun restoreFields() {
+        binding.etTitle.setText(viewModel.title.value)
+        binding.etDescription.setText(viewModel.description.value)
+        binding.etPrice.setText(viewModel.price.value)
+        if (viewModel.imageUrl.value != "default") {
+            // Ako je već postavljena slika, prikaži je (ovdje možete dodati logiku ako je potrebno)
+        }
     }
 
     private fun validateInputs(): Boolean {
@@ -127,6 +142,38 @@ class AddServiceFragment : Fragment() {
         }
     }
 
+    private fun processServiceCreation(uid: String) {
+        firestore.collection("users").document(uid).get()
+            .addOnSuccessListener { document ->
+                if (document.exists()) {
+                    val serviceData = getServiceData(document)
+                    imageUri?.let { uri ->
+                        uploadImageAndCreateService(serviceData, uri)
+                    } ?: createServiceWithDefaultImage(serviceData)
+                } else {
+                    showError("Korisnički podaci nisu dostupni")
+                }
+            }
+            .addOnFailureListener { e ->
+                showError("Greška pri dohvaćanju podataka: ${e.message}")
+            }
+    }
+
+    private fun getServiceData(document: DocumentSnapshot): CraftsmanData {
+        // Sada kreiramo objekt koji sadrži i podatke iz forme i podatke iz korisničkog dokumenta.
+        return CraftsmanData(
+            name = viewModel.title.value ?: "",  // naziv usluge
+            description = viewModel.description.value ?: "",
+            price = viewModel.price.value?.toDoubleOrNull() ?: 0.0,
+            craftsman = document.getString("name") ?: "Nepoznato",  // ime majstora
+            location = document.getString("location") ?: "Nepoznato",
+            rating = document.getDouble("rating")?.toFloat() ?: 0f,
+            specialization = document.getString("specialization") ?: "Nepoznato",
+            imageUrl = viewModel.imageUrl.value ?: "default",
+            category = ""  // ako imate kategoriju, dodajte je ovdje
+        )
+    }
+
     private fun uploadImageAndCreateService(data: CraftsmanData, uri: Uri) {
         val storageRef = FirebaseStorage.getInstance().reference
             .child("service_images/${System.currentTimeMillis()}.jpg")
@@ -134,6 +181,7 @@ class AddServiceFragment : Fragment() {
         storageRef.putFile(uri)
             .addOnSuccessListener {
                 storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                    viewModel.setImageUrl(downloadUri.toString())
                     saveService(data.copy(imageUrl = downloadUri.toString()))
                 }
             }
@@ -148,12 +196,15 @@ class AddServiceFragment : Fragment() {
 
     private fun saveService(data: CraftsmanData) {
         firestore.collection("services").add(data.toMap())
-            .addOnSuccessListener {
+            .addOnSuccessListener { documentReference ->
                 showConfirmation()
                 clearForm()
+                // Log ili Toast za potvrdu
+                println("Uspješno dodan oglas s ID-em: ${documentReference.id}")
             }
             .addOnFailureListener { e ->
                 showError("Greška pri spremanju: ${e.message}")
+                e.printStackTrace()
             }
     }
 
@@ -180,23 +231,6 @@ class AddServiceFragment : Fragment() {
         _binding = null
     }
 
-    data class CraftsmanData(
-        val name: String,
-        val location: String,
-        val rating: Float,
-        val specialization: String,
-        val imageUrl: String = "default"
-    ) {
-        fun toMap(): Map<String, Any> {
-            return mapOf(
-                "name" to name,
-                "location" to location,
-                "rating" to rating,
-                "specialization" to specialization,
-                "imageUrl" to imageUrl
-            )
-        }
-    }
     companion object {
         fun newInstance() = AddServiceFragment()
     }

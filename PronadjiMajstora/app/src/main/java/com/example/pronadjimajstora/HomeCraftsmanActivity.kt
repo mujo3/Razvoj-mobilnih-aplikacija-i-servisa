@@ -14,8 +14,10 @@ class HomeCraftsmanActivity : AppCompatActivity() {
         binding = ActivityHomeCraftsmanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Postavi početni fragment na profil majstora
-        loadFragment(CraftsmanProfileFragment.newInstance())
+        // Samo ako nema spremljenog stanja, postavimo početni fragment
+        if (savedInstanceState == null) {
+            loadFragment(CraftsmanProfileFragment.newInstance())
+        }
 
         setupBottomNavigation()
     }

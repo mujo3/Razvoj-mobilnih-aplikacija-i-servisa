@@ -1,20 +1,17 @@
 package com.example.pronadjimajstora
 
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.Toast
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.bumptech.glide.Glide
 import com.example.pronadjimajstora.databinding.FragmentCraftsmanProfileBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.storage.FirebaseStorage
 
 class CraftsmanProfileFragment : Fragment() {
 
@@ -23,10 +20,13 @@ class CraftsmanProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
+    // Koristimo CraftsmanProfileViewModel za čuvanje stanja profila
+    private val profileViewModel: CraftsmanProfileViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         _binding = FragmentCraftsmanProfileBinding.inflate(inflater, container, false)
         return binding.root
@@ -47,22 +47,38 @@ class CraftsmanProfileFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { document ->
                     document?.let {
-                        with(binding) {
-                            tvName.text = it.getString("name") ?: "Unesite ime"
-                            tvSpecialization.text = it.getString("specialization") ?: "Unesite specijalizaciju"
-                            tvRating.text = "★".repeat(it.getDouble("rating")?.toInt() ?: 0)
-                            tvLocation.text = it.getString("location") ?: "Lokacija nije postavljena"
-                            tvPhone.text = it.getString("phone") ?: "Telefon nije postavljen"
-                            tvEmail.text = it.getString("email") ?: "Email nije postavljen"
-                            tvBio.text = it.getString("bio") ?: "Opišite se"
-
-                            val profilePicUrl = it.getString("profilePicUrl")
-                            if (!profilePicUrl.isNullOrEmpty()) {
-                                Glide.with(requireContext()).load(profilePicUrl).into(binding.ivProfilePicture)
-                            }
+                        // Ažuriramo ViewModel s učitanim podacima (ako već nisu postavljeni)
+                        profileViewModel.apply {
+                            if (name.value.isNullOrEmpty()) setName(it.getString("name") ?: "")
+                            if (specialization.value.isNullOrEmpty()) setSpecialization(it.getString("specialization") ?: "")
+                            if (location.value.isNullOrEmpty()) setLocation(it.getString("location") ?: "")
+                            if (phone.value.isNullOrEmpty()) setPhone(it.getString("phone") ?: "")
+                            if (email.value.isNullOrEmpty()) setEmail(it.getString("email") ?: "")
+                            if (bio.value.isNullOrEmpty()) setBio(it.getString("bio") ?: "")
+                            if (profilePicUrl.value.isNullOrEmpty()) setProfilePicUrl(it.getString("profilePicUrl") ?: "")
+                            if (rating.value == 0f) setRating(it.getDouble("rating")?.toFloat() ?: 0f)
                         }
+                        updateUI()
                     }
                 }
+        }
+    }
+
+    private fun updateUI() {
+        with(binding) {
+            tvName.text = (profileViewModel.name.value ?: "").ifEmpty { "Unesite ime" }
+            tvSpecialization.text = (profileViewModel.specialization.value ?: "").ifEmpty { "Unesite specijalizaciju" }
+            tvLocation.text = (profileViewModel.location.value ?: "").ifEmpty { "Lokacija nije postavljena" }
+            tvPhone.text = (profileViewModel.phone.value ?: "").ifEmpty { "Telefon nije postavljen" }
+            tvEmail.text = (profileViewModel.email.value ?: "").ifEmpty { "Email nije postavljen" }
+            tvBio.text = (profileViewModel.bio.value ?: "").ifEmpty { "Opišite se" }
+            // Za rating, primjer – prikaz zvjezdica
+            val ratingInt = profileViewModel.rating.value?.toInt() ?: 0
+            tvRating.text = "★".repeat(ratingInt)
+            val profilePicUrl = profileViewModel.profilePicUrl.value
+            if (!profilePicUrl.isNullOrEmpty()) {
+                Glide.with(requireContext()).load(profilePicUrl).into(binding.ivProfilePicture)
+            }
         }
     }
 
@@ -74,81 +90,61 @@ class CraftsmanProfileFragment : Fragment() {
 
     private fun showEditProfileDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_profile, null)
-        val currentUser = auth.currentUser ?: return
+        val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etName)
+        val etSpecialization = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSpecialization)
+        val etLocation = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etLocation)
+        val etPhone = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etPhone)
+        val etEmail = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etEmail)
+        val etBio = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBio)
+        val ivDialogProfilePicture = dialogView.findViewById<android.widget.ImageView>(R.id.ivDialogProfilePicture)
 
-        firestore.collection("users").document(currentUser.uid).get()
-            .addOnSuccessListener { document ->
-                val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etName)
-                val etSpecialization = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSpecialization)
-                val etLocation = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etLocation)
-                val etPhone = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etPhone)
-                val etEmail = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etEmail)
-                val etBio = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBio)
-                val ivDialogProfilePicture = dialogView.findViewById<ImageView>(R.id.ivDialogProfilePicture)
+        // Postavi trenutno spremljene podatke iz ViewModel‑a
+        etName.setText(profileViewModel.name.value)
+        etSpecialization.setText(profileViewModel.specialization.value)
+        etLocation.setText(profileViewModel.location.value)
+        etPhone.setText(profileViewModel.phone.value)
+        etEmail.setText(profileViewModel.email.value)
+        etBio.setText(profileViewModel.bio.value)
 
-                etName.setText(document.getString("name"))
-                etSpecialization.setText(document.getString("specialization"))
-                etLocation.setText(document.getString("location"))
-                etPhone.setText(document.getString("phone"))
-                etEmail.setText(document.getString("email"))
-                etBio.setText(document.getString("bio"))
+        val profilePicUrl = profileViewModel.profilePicUrl.value
+        if (!profilePicUrl.isNullOrEmpty()) {
+            Glide.with(requireContext()).load(profilePicUrl).into(ivDialogProfilePicture)
+        }
 
-                val profilePicUrl = document.getString("profilePicUrl")
-                if (!profilePicUrl.isNullOrEmpty()) {
-                    Glide.with(requireContext()).load(profilePicUrl).into(ivDialogProfilePicture)
-                }
-
-                ivDialogProfilePicture.setOnClickListener {
-                    getImageLauncher.launch("image/*")
-                }
-
-                val builder = MaterialAlertDialogBuilder(requireContext())
-                    .setTitle("Uredi profil")
-                    .setView(dialogView)
-                    .setPositiveButton("Spremi") { dialog, _ ->
-                        val updates = hashMapOf<String, Any>(
-                            "name" to etName.text.toString(),
-                            "specialization" to etSpecialization.text.toString(),
-                            "location" to etLocation.text.toString(),
-                            "phone" to etPhone.text.toString(),
-                            "email" to etEmail.text.toString(),
-                            "bio" to etBio.text.toString()
-                        )
-
-                        firestore.collection("users").document(currentUser.uid)
-                            .update(updates)
-                            .addOnSuccessListener {
-                                setupProfile()
-                                Toast.makeText(requireContext(), "Profil ažuriran", Toast.LENGTH_SHORT).show()
-                            }
-                            .addOnFailureListener { e ->
-                                Toast.makeText(requireContext(), "Greška: ${e.message}", Toast.LENGTH_SHORT).show()
-                            }
-                        dialog.dismiss()
-                    }
-                    .setNegativeButton("Odustani") { dialog, _ -> dialog.dismiss() }
-
-                builder.create().show()
-            }
-    }
-
-    private val getImageLauncher = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
-        uri?.let { uploadImage(it) }
-    }
-
-    private fun uploadImage(uri: Uri) {
-        val userId = auth.currentUser?.uid ?: return
-        val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/$userId.jpg")
-        storageRef.putFile(uri)
-            .addOnSuccessListener {
-                storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                    firestore.collection("users").document(userId)
-                        .update("profilePicUrl", downloadUri.toString())
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle("Uredi profil")
+            .setView(dialogView)
+            .setPositiveButton("Spremi") { dialog, _ ->
+                // Spremi izmjene u Firestore i ažuriraj ViewModel
+                val updates = mapOf(
+                    "name" to etName.text.toString(),
+                    "specialization" to etSpecialization.text.toString(),
+                    "location" to etLocation.text.toString(),
+                    "phone" to etPhone.text.toString(),
+                    "email" to etEmail.text.toString(),
+                    "bio" to etBio.text.toString()
+                )
+                val currentUser = auth.currentUser
+                if (currentUser != null) {
+                    firestore.collection("users").document(currentUser.uid)
+                        .update(updates)
                         .addOnSuccessListener {
-                            setupProfile()
+                            profileViewModel.setName(etName.text.toString())
+                            profileViewModel.setSpecialization(etSpecialization.text.toString())
+                            profileViewModel.setLocation(etLocation.text.toString())
+                            profileViewModel.setPhone(etPhone.text.toString())
+                            profileViewModel.setEmail(etEmail.text.toString())
+                            profileViewModel.setBio(etBio.text.toString())
+                            updateUI()
+                            Toast.makeText(requireContext(), "Profil ažuriran", Toast.LENGTH_SHORT).show()
                         }
                 }
+                dialog.dismiss()
             }
+            .setNegativeButton("Odustani") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
     }
 
     override fun onDestroyView() {
