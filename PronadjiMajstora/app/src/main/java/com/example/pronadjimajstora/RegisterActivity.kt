@@ -3,8 +3,10 @@ package com.example.pronadjimajstora
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Patterns
-import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pronadjimajstora.databinding.FragmentRegisterBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -22,6 +24,9 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
 
+    // Inicijaliziramo RegisterViewModel – stanje emaila će se čuvati
+    private val registerViewModel: RegisterViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FragmentRegisterBinding.inflate(layoutInflater)
@@ -29,6 +34,19 @@ class RegisterActivity : AppCompatActivity() {
         setupKeyboardListener()
         initializeAuth()
         setupClickListeners()
+        setupTextWatchers()
+        // Obnova spremljene vrijednosti emaila iz ViewModel-a
+        binding.etEmail.setText(registerViewModel.email.value)
+    }
+
+    private fun setupTextWatchers() {
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                registerViewModel.setEmail(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
     }
 
     private fun setupKeyboardListener() {
@@ -161,10 +179,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showError(message: String) {
-        // Umjesto tvRegister.error koristimo Snackbar
         Snackbar.make(binding.root, message, Snackbar.LENGTH_LONG).show()
-
-        // Dodatno: Postavljanje greške na odgovarajuće polje
         when {
             message.contains("email", true) -> binding.etEmail.error = message
             message.contains("šifr", true) -> binding.etPassword.error = message

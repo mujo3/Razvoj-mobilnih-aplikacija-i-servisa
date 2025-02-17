@@ -3,7 +3,10 @@ package com.example.pronadjimajstora
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pronadjimajstora.databinding.ActivityLoginBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -15,6 +18,9 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
+    // Inicijaliziramo LoginViewModel – čuva se samo email
+    private val loginViewModel: LoginViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
@@ -23,6 +29,19 @@ class LoginActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         setupClickListeners()
+        setupTextWatchers()
+        // Vraćamo spremljeni email iz ViewModel-a
+        binding.etEmail.setText(loginViewModel.email.value)
+    }
+
+    private fun setupTextWatchers() {
+        binding.etEmail.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                loginViewModel.setEmail(s.toString())
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+        })
     }
 
     private fun setupKeyboardListener() {
@@ -37,9 +56,11 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
     override fun onBackPressed() {
         moveTaskToBack(true)
     }
+
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {
             val email = binding.etEmail.text.toString().trim()

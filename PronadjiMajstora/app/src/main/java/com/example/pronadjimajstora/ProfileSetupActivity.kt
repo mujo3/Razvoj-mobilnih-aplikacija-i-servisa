@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pronadjimajstora.databinding.ActivityProfileSetupBinding
 import com.google.firebase.auth.FirebaseAuth
@@ -16,6 +17,9 @@ class ProfileSetupActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private var userType: String = "kupac"
 
+    // Koristimo ProfileSetupViewModel za čuvanje unosa
+    private val profileSetupViewModel: ProfileSetupViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileSetupBinding.inflate(layoutInflater)
@@ -24,15 +28,18 @@ class ProfileSetupActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        // Provera da li je profil već podešen
         checkUserProfile()
 
-        // Postavi podatke dobivene iz prijave
+        // Postavljanje podataka iz intent-a i ViewModel-a
         val email = intent.getStringExtra("email")
         val name = intent.getStringExtra("name")
-        binding.etFullName.setText(name ?: "")
+        if (profileSetupViewModel.fullName.value.isNullOrEmpty()) {
+            profileSetupViewModel.setFullName(name ?: "")
+        }
+        binding.etFullName.setText(profileSetupViewModel.fullName.value)
+        binding.etLocation.setText(profileSetupViewModel.location.value)
+        binding.etSpecialization.setText(profileSetupViewModel.specialization.value)
 
-        // Promjena tipa korisnika
         binding.radioUserType.setOnCheckedChangeListener { _, checkedId ->
             userType = when (checkedId) {
                 R.id.radioCustomer -> {
@@ -47,6 +54,8 @@ class ProfileSetupActivity : AppCompatActivity() {
             }
         }
 
+        setupTextWatchers()
+
         binding.btnCompleteRegistration.setOnClickListener {
             val fullName = binding.etFullName.text.toString().trim()
             val location = binding.etLocation.text.toString().trim()
@@ -58,23 +67,26 @@ class ProfileSetupActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupTextWatchers() {
+        binding.etFullName.addTextChangedListener(SimpleTextWatcher { profileSetupViewModel.setFullName(it) })
+        binding.etLocation.addTextChangedListener(SimpleTextWatcher { profileSetupViewModel.setLocation(it) })
+        binding.etSpecialization.addTextChangedListener(SimpleTextWatcher { profileSetupViewModel.setSpecialization(it) })
+    }
+
     private fun checkUserProfile() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             firestore.collection("users").document(currentUser.uid).get()
                 .addOnSuccessListener { document ->
                     if (document.exists() && document.getString("name") != null) {
-                        // Profil je već podešen, preusmeri na home ekran
                         val userType = document.getString("userType") ?: "kupac"
                         navigateToHome(userType)
                     }
-                    // Ako profil nije podešen, nastavi sa inicijalizacijom
                 }
                 .addOnFailureListener { e ->
                     Toast.makeText(this, "Greška pri provjeri profila: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
         } else {
-            // Korisnik nije prijavljen, preusmeri na LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
@@ -82,11 +94,7 @@ class ProfileSetupActivity : AppCompatActivity() {
         }
     }
 
-    private fun validateInputs(
-        fullName: String,
-        location: String,
-        specialization: String
-    ): Boolean {
+    private fun validateInputs(fullName: String, location: String, specialization: String): Boolean {
         return when {
             fullName.isEmpty() -> {
                 binding.etFullName.error = "Unesite ime i prezime"
