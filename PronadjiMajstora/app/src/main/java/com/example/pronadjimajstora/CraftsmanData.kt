@@ -1,15 +1,19 @@
 package com.example.pronadjimajstora
 
+import com.google.firebase.firestore.IgnoreExtraProperties
+
+@IgnoreExtraProperties
 data class CraftsmanData(
-    val name: String,           // naziv usluge (service name)
-    val description: String,
-    val price: Double,
-    val craftsman: String,       // ime majstora
-    val location: String,
-    val rating: Float,
-    val specialization: String,
-    val imageUrl: String,
-    val category: String = ""
+    var id: String = "",           // Dodano za potrebe dokument referenci
+    var name: String = "",         // naziv usluge
+    var description: String = "",
+    var price: Double = 0.0,
+    var craftsman: String = "",     // ime majstora
+    var location: String = "",
+    var rating: Float = 0f,
+    var specialization: String = "",
+    var imageUrl: String = "",
+    var category: String = ""
 ) {
     fun toMap(): Map<String, Any> {
         return mapOf(

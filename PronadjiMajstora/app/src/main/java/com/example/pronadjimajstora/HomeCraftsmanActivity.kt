@@ -14,7 +14,7 @@ class HomeCraftsmanActivity : AppCompatActivity() {
         binding = ActivityHomeCraftsmanBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Samo ako nema spremljenog stanja, postavimo početni fragment
+        // Postavimo početni fragment samo ako nema spremljenog stanja
         if (savedInstanceState == null) {
             loadFragment(CraftsmanProfileFragment.newInstance())
         }

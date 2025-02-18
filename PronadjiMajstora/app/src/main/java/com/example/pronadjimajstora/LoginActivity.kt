@@ -57,10 +57,6 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-        moveTaskToBack(true)
-    }
 
     private fun setupClickListeners() {
         binding.btnLogin.setOnClickListener {

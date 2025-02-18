@@ -1,9 +1,11 @@
 package com.example.pronadjimajstora
 
+import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -12,6 +14,8 @@ import com.example.pronadjimajstora.databinding.FragmentCraftsmanProfileBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
+import com.google.android.material.snackbar.Snackbar
 
 class CraftsmanProfileFragment : Fragment() {
 
@@ -22,6 +26,33 @@ class CraftsmanProfileFragment : Fragment() {
 
     // Koristimo CraftsmanProfileViewModel za čuvanje stanja profila
     private val profileViewModel: CraftsmanProfileViewModel by viewModels()
+
+    // Launcher za odabir slike iz galerije
+    private val pickProfileImageLauncher = registerForActivityResult(
+        androidx.activity.result.contract.ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let { selectedUri ->
+            // Upload slike na Firebase Storage
+            val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/${auth.currentUser?.uid}.jpg")
+            storageRef.putFile(selectedUri)
+                .addOnSuccessListener {
+                    storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
+                        // Ako je dijalog još otvoren, ažuriraj ImageView u dijalogu
+                        currentDialogView?.findViewById<ImageView>(R.id.ivDialogProfilePicture)?.let { iv ->
+                            Glide.with(requireContext()).load(downloadUri.toString()).into(iv)
+                        }
+                        // Ažuriraj ViewModel
+                        profileViewModel.setProfilePicUrl(downloadUri.toString())
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(requireContext(), "Upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    // Držač reference na trenutno otvoreni dialog (ako postoji)
+    private var currentDialogView: View? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -47,7 +78,7 @@ class CraftsmanProfileFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { document ->
                     document?.let {
-                        // Ažuriramo ViewModel s učitanim podacima (ako već nisu postavljeni)
+                        // Ažuriramo ViewModel s učitanim podacima
                         profileViewModel.apply {
                             if (name.value.isNullOrEmpty()) setName(it.getString("name") ?: "")
                             if (specialization.value.isNullOrEmpty()) setSpecialization(it.getString("specialization") ?: "")
@@ -72,12 +103,11 @@ class CraftsmanProfileFragment : Fragment() {
             tvPhone.text = (profileViewModel.phone.value ?: "").ifEmpty { "Telefon nije postavljen" }
             tvEmail.text = (profileViewModel.email.value ?: "").ifEmpty { "Email nije postavljen" }
             tvBio.text = (profileViewModel.bio.value ?: "").ifEmpty { "Opišite se" }
-            // Za rating, primjer – prikaz zvjezdica
             val ratingInt = profileViewModel.rating.value?.toInt() ?: 0
             tvRating.text = "★".repeat(ratingInt)
             val profilePicUrl = profileViewModel.profilePicUrl.value
             if (!profilePicUrl.isNullOrEmpty()) {
-                Glide.with(requireContext()).load(profilePicUrl).into(binding.ivProfilePicture)
+                Glide.with(requireContext()).load(profilePicUrl).into(ivProfilePicture)
             }
         }
     }
@@ -90,39 +120,45 @@ class CraftsmanProfileFragment : Fragment() {
 
     private fun showEditProfileDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_profile, null)
+        currentDialogView = dialogView // Spremi referencu na trenutno otvoreni dijalog view
+
         val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etName)
         val etSpecialization = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSpecialization)
         val etLocation = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etLocation)
         val etPhone = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etPhone)
         val etEmail = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etEmail)
         val etBio = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBio)
-        val ivDialogProfilePicture = dialogView.findViewById<android.widget.ImageView>(R.id.ivDialogProfilePicture)
+        val ivDialogProfilePicture = dialogView.findViewById<ImageView>(R.id.ivDialogProfilePicture)
 
-        // Postavi trenutno spremljene podatke iz ViewModel‑a
+        // Postavi trenutno spremljene podatke
         etName.setText(profileViewModel.name.value)
         etSpecialization.setText(profileViewModel.specialization.value)
         etLocation.setText(profileViewModel.location.value)
         etPhone.setText(profileViewModel.phone.value)
         etEmail.setText(profileViewModel.email.value)
         etBio.setText(profileViewModel.bio.value)
-
         val profilePicUrl = profileViewModel.profilePicUrl.value
         if (!profilePicUrl.isNullOrEmpty()) {
             Glide.with(requireContext()).load(profilePicUrl).into(ivDialogProfilePicture)
+        }
+
+        // Dodaj onClickListener na ImageView za promjenu slike
+        ivDialogProfilePicture.setOnClickListener {
+            pickProfileImageLauncher.launch("image/*")
         }
 
         MaterialAlertDialogBuilder(requireContext())
             .setTitle("Uredi profil")
             .setView(dialogView)
             .setPositiveButton("Spremi") { dialog, _ ->
-                // Spremi izmjene u Firestore i ažuriraj ViewModel
                 val updates = mapOf(
                     "name" to etName.text.toString(),
                     "specialization" to etSpecialization.text.toString(),
                     "location" to etLocation.text.toString(),
                     "phone" to etPhone.text.toString(),
                     "email" to etEmail.text.toString(),
-                    "bio" to etBio.text.toString()
+                    "bio" to etBio.text.toString(),
+                    "profilePicUrl" to profileViewModel.profilePicUrl.value // ažurirano ako je promijenjeno
                 )
                 val currentUser = auth.currentUser
                 if (currentUser != null) {
@@ -140,9 +176,11 @@ class CraftsmanProfileFragment : Fragment() {
                         }
                 }
                 dialog.dismiss()
+                currentDialogView = null
             }
             .setNegativeButton("Odustani") { dialog, _ ->
                 dialog.dismiss()
+                currentDialogView = null
             }
             .show()
     }

@@ -114,7 +114,7 @@ class AddServiceFragment : Fragment() {
         binding.etDescription.setText(viewModel.description.value)
         binding.etPrice.setText(viewModel.price.value)
         if (viewModel.imageUrl.value != "default") {
-            // Ako je već postavljena slika, prikaži je (ovdje možete dodati logiku ako je potrebno)
+
         }
     }
 

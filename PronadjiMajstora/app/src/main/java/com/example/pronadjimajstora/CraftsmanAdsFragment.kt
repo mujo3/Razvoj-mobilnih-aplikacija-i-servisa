@@ -86,13 +86,13 @@ class CraftsmanAdsFragment : Fragment() {
                         Snackbar.make(binding.root, "Greška: ${error.message}", Snackbar.LENGTH_LONG).show()
                         return@addSnapshotListener
                     }
-                    // Provjera binding reference prije rada s njim
                     if (_binding == null) return@addSnapshotListener
 
                     if (snapshot != null) {
                         ads.clear()
                         for (doc in snapshot.documents) {
-                            val service = doc.toObject(Service::class.java)
+                            // Postavljamo document ID u Service model (pretpostavljamo da Service ima var id: String)
+                            val service = doc.toObject(Service::class.java)?.copy(id = doc.id)
                             if (service != null) {
                                 ads.add(service)
                             }
@@ -118,6 +118,10 @@ class CraftsmanAdsFragment : Fragment() {
     }
 
     private fun deleteAd(service: Service) {
+        if (service.id.isEmpty()) {
+            Snackbar.make(binding.root, "ID oglasa nije dostupan", Snackbar.LENGTH_LONG).show()
+            return
+        }
         firestore.collection("services").document(service.id)
             .delete()
             .addOnSuccessListener {

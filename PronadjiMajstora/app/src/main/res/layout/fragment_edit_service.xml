@@ -39,6 +39,7 @@
             android:hint="Naziv usluge"
             android:textColorHint="@color/colorTextSecondary"
             android:textSize="18sp"
+            android:freezesText="true"
             android:layout_marginTop="16dp"/>
 
         <!-- Opis usluge -->
@@ -51,6 +52,7 @@
             android:minLines="3"
             android:gravity="top"
             android:inputType="textMultiLine"
+            android:freezesText="true"
             android:layout_marginTop="8dp" />
 
         <!-- Cijena usluge -->
@@ -61,6 +63,7 @@
             android:hint="Cijena usluge"
             android:textColorHint="@color/colorTextSecondary"
             android:inputType="numberDecimal"
+            android:freezesText="true"
             android:layout_marginTop="8dp" />
 
         <!-- Dugme za potvrdu -->

@@ -16,6 +16,7 @@ import com.example.pronadjimajstora.databinding.FragmentEditServiceBinding
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.storage.FirebaseStorage
 
 class EditServiceFragment : Fragment() {
@@ -52,6 +53,10 @@ class EditServiceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupKeyboardListener()
         setupTextWatchers()
+        // Pokrećemo image picker kada korisnik klikne na sliku
+        binding.ivServiceImage.setOnClickListener {
+            pickImage.launch("image/*")
+        }
         loadServiceData()
         binding.btnSubmit.setOnClickListener {
             if (validateInputs()) {
@@ -87,7 +92,6 @@ class EditServiceFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
-
         binding.etDescription.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.setDescription(s.toString())
@@ -95,7 +99,6 @@ class EditServiceFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
         })
-
         binding.etPrice.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.setPrice(s.toString())
@@ -113,12 +116,15 @@ class EditServiceFragment : Fragment() {
                 if (!isAdded || _binding == null) return@addOnSuccessListener
 
                 if (document.exists()) {
+                    // Učitavamo podatke iz dokumenta i postavljamo id iz document.id
                     currentCraftsmanData = document.toObject(CraftsmanData::class.java)!!
+                    currentCraftsmanData.id = document.id
+                    // Ažuriramo ViewModel s dohvaćenim podacima
                     viewModel.setTitle(currentCraftsmanData.name)
                     viewModel.setDescription(currentCraftsmanData.description)
                     viewModel.setPrice(currentCraftsmanData.price.toString())
                     viewModel.setImageUrl(currentCraftsmanData.imageUrl)
-                    Log.d("EditServiceFragment", "Podaci uspješno učitani: $currentCraftsmanData")
+                    Log.d("EditServiceFragment", "Podaci učitani: $currentCraftsmanData")
                     populateFields()
                 } else {
                     showError("Usluga ne postoji")
@@ -140,7 +146,7 @@ class EditServiceFragment : Fragment() {
                         .load(viewModel.imageUrl.value)
                         .into(ivServiceImage)
                 }
-                Log.d("EditServiceFragment", "Polja uspješno popunjena")
+                Log.d("EditServiceFragment", "Polja popunjena")
             }
         }
     }
@@ -187,12 +193,12 @@ class EditServiceFragment : Fragment() {
 
     private fun updateService(imageUrl: String) {
         if (!::currentCraftsmanData.isInitialized) {
-            showError("currentCraftsmanData nije inicijalizovan")
+            showError("Podaci nisu učitani")
             return
         }
 
         val updatedCraftsmanData = currentCraftsmanData.copy(
-            name = binding.etTitle.text.toString(),
+            name = binding.etTitle.text.toString(), // naziv usluge
             description = binding.etDescription.text.toString(),
             price = binding.etPrice.text.toString().toDouble(),
             imageUrl = imageUrl
@@ -201,7 +207,7 @@ class EditServiceFragment : Fragment() {
         firestore.collection("services").document(serviceId)
             .set(updatedCraftsmanData)
             .addOnSuccessListener {
-                Log.d("EditServiceFragment", "Podaci uspješno ažurirani: $updatedCraftsmanData")
+                Log.d("EditServiceFragment", "Podaci ažurirani: $updatedCraftsmanData")
                 showConfirmation()
                 parentFragmentManager.popBackStack()
             }
