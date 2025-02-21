@@ -8,7 +8,8 @@ import com.example.pronadjimajstora.databinding.ItemServiceBinding
 
 class ServiceAdapter(
     private var services: List<Service>,
-    private val onContactClick: (Service) -> Unit
+    private val onContactClick: (Service) -> Unit,
+    private val onEndAdClick: (Service) -> Unit
 ) : RecyclerView.Adapter<ServiceAdapter.ServiceViewHolder>() {
 
     inner class ServiceViewHolder(val binding: ItemServiceBinding) :
@@ -28,15 +29,14 @@ class ServiceAdapter(
         with(holder.binding) {
             tvServiceName.text = service.name
             tvCraftsmanName.text = service.craftsman
-            ratingBar.rating = service.rating
+            ratingBar.rating = service.rating.toFloat()
             tvLocation.text = "Lokacija: ${service.location}"
             tvPriceRange.text = "Cijena: ${service.price}"
             tvDescription.text = service.description
 
-            // Ako je imageUrl marker "default", učitaj lokalni resurs; inače učitaj URL slike
             if (service.imageUrl == "default") {
                 Glide.with(holder.itemView.context)
-                    .load(R.drawable.ic_add_photo) // lokalni resurs default slike
+                    .load(R.drawable.ic_add_photo)
                     .into(ivServiceImage)
             } else {
                 Glide.with(holder.itemView.context)
@@ -46,12 +46,12 @@ class ServiceAdapter(
             }
 
             btnContact.setOnClickListener { onContactClick(service) }
+            btnEndAd.setOnClickListener { onEndAdClick(service) }
         }
     }
 
     override fun getItemCount() = services.size
 
-    // Metoda za ažuriranje liste servisa
     fun updateList(newList: List<Service>) {
         services = newList
         notifyDataSetChanged()

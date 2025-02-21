@@ -42,7 +42,6 @@ class ProfileActivity : AppCompatActivity() {
                         binding.tvUserName.text = it.getString("name") ?: "Nepoznati korisnik"
                         binding.tvEmail.text = it.getString("email") ?: "email@example.com"
                         binding.tvLocation.text = it.getString("location") ?: "Lokacija nije postavljena"
-                        binding.tvRating.text = "Ocjena: ${it.getDouble("rating") ?: 0.0}"
                         binding.tvFinishedAds.text = "${it.getLong("finished_ads") ?: 0}"
                         binding.tvPostedRequests.text = "${it.getLong("posted_requests") ?: 0}"
 

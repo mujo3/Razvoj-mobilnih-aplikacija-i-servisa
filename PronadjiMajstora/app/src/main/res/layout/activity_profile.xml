@@ -15,7 +15,7 @@
         android:padding="16dp"
         android:layout_marginTop="25dp">
 
-        <!-- Profile Header -->
+
         <ImageView
             android:id="@+id/ivProfile"
             android:layout_width="100dp"
@@ -27,7 +27,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"/>
 
-        <!-- Edit Button -->
+
         <Button
             android:id="@+id/btnEditProfile"
             android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             style="@style/FilterButtonStyle"/>
 
-        <!-- User Stats -->
+
         <LinearLayout
             android:id="@+id/statsContainer"
             android:layout_width="match_parent"
@@ -97,7 +97,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- User Details -->
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Ime Prezime -->
+
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="match_parent"
@@ -122,7 +122,7 @@
                     android:textColor="@color/colorText"
                     android:text="Ime Prezime"/>
 
-                <!-- Lokacija -->
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -145,30 +145,7 @@
                         android:textColor="@color/colorTextSecondary"/>
                 </LinearLayout>
 
-                <!-- Ocjena -->
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
 
-                    <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
-                        android:src="@drawable/ic_star"
-                        app:tint="@color/colorTextSecondary"/>
-
-                    <TextView
-                        android:id="@+id/tvRating"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Ocjena: 4.5"
-                        android:textColor="@color/colorTextSecondary"/>
-                </LinearLayout>
-
-                <!-- Email -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

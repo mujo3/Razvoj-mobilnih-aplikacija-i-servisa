@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15sp">
 
-        <!-- Originalni sadržaj ostaje isti -->
+
         <ImageView
             android:id="@+id/ivProfilePicture"
             android:layout_width="120dp"

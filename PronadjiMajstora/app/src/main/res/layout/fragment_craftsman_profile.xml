@@ -9,7 +9,7 @@
     android:background="@color/colorBackground"
     tools:context=".CraftsmanProfileFragment">
 
-    <!-- FloatingActionButton za uređivanje profila -->
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_edit_profile"
         android:layout_width="wrap_content"
@@ -22,7 +22,7 @@
         app:tint="@color/white"
         android:layout_gravity="end|bottom" />
 
-    <!-- Sadržaj profila unutar ScrollView -->
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -35,7 +35,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Slika profila -->
+
             <ImageView
                 android:id="@+id/iv_profile_picture"
                 android:layout_width="120dp"
@@ -45,7 +45,7 @@
                 android:scaleType="centerCrop"
                 android:src="@drawable/profile_placeholder" />
 
-            <!-- Ime majstora -->
+
             <TextView
                 android:id="@+id/tv_name"
                 android:layout_width="match_parent"
@@ -56,7 +56,7 @@
                 android:textSize="24sp"
                 android:textStyle="bold" />
 
-            <!-- Specijalizacija -->
+
             <TextView
                 android:id="@+id/tv_specialization"
                 android:layout_width="match_parent"
@@ -66,7 +66,7 @@
                 android:textColor="@color/colorHint"
                 android:textSize="18sp" />
 
-            <!-- Ocjena -->
+
             <TextView
                 android:id="@+id/tv_rating"
                 android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                 android:textColor="@color/colorSecondary"
                 android:textSize="18sp" />
 
-            <!-- Kontakt informacije unutar CardView -->
+
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <!-- Lokacija -->
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -114,7 +114,7 @@
                             android:textSize="16sp" />
                     </LinearLayout>
 
-                    <!-- Telefon -->
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -137,7 +137,7 @@
                             android:textSize="16sp" />
                     </LinearLayout>
 
-                    <!-- Email -->
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -164,14 +164,14 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Biografija -->
+
             <TextView
                 android:id="@+id/tv_bio_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="O meni"
-                android:textColor="@color/colorText"
+                android:textColor="@color/colorAccent"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

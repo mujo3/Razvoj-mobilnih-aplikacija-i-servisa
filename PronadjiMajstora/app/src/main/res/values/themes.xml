@@ -1,29 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Glavna tema -->
+
+
     <style name="Theme.PronadjiMajstora" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="android:windowSoftInputMode">adjustResize</item>
-        <!-- Primarna paleta -->
+
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryVariant">@color/colorPrimaryVariant</item>
         <item name="colorOnPrimary">@color/colorText</item>
 
-        <!-- Sekundarna paleta -->
+
         <item name="colorSecondary">@color/colorSecondary</item>
         <item name="colorOnSecondary">@color/colorSurface</item>
 
-        <!-- Pozadina -->
+
         <item name="android:windowBackground">@color/colorBackground</item>
         <item name="colorSurface">@color/colorSurface</item>
 
-        <!-- Tekst -->
+
         <item name="android:textColorPrimary">@color/colorText</item>
         <item name="android:textColorSecondary">@color/colorHint</item>
         <item name="android:textColorTertiary">@color/colorSecondary</item>
 
-        <!-- Input polja -->
+
         <item name="textInputStyle">@style/TextInputStyle</item>
 
-        <!-- Dodat stil za prilagođeni dialog -->
+
         <item name="alertDialogTheme">@style/CustomDialogTheme</item>
     </style>
 
@@ -37,7 +39,7 @@
     </style>
 
 
-    <!-- Stil za filter dugmad -->
+
     <style name="FilterButtonStyle" parent="Widget.MaterialComponents.Button.OutlinedButton">
         <item name="android:textColor">@color/colorText</item>
         <item name="android:drawableTint">@color/colorSecondary</item>
@@ -48,7 +50,7 @@
         <item name="android:paddingVertical">10dp</item>
     </style>
 
-    <!-- Stil za input polja -->
+
     <style name="TextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
         <item name="boxStrokeColor">@color/colorPrimary</item>
         <item name="hintTextColor">@color/colorHint</item>
@@ -56,7 +58,7 @@
         <item name="android:textColor">@color/colorText</item>
     </style>
 
-    <!-- Stil za prilagođeni dialog -->
+
     <style name="CustomDialogTheme" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
         <item name="colorPrimary">@color/customDialogTitleColor</item>
     </style>

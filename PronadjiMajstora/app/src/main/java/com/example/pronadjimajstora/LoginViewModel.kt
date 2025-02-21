@@ -9,7 +9,7 @@ class LoginViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel
         private const val KEY_EMAIL = "login_email"
     }
 
-    // Sprema se samo email; lozinka se ne čuva
+
     val email: LiveData<String> = savedStateHandle.getLiveData(KEY_EMAIL, "")
 
     fun setEmail(newEmail: String) {

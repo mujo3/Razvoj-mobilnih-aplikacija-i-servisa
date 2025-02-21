@@ -27,7 +27,7 @@ class EditServiceFragment : Fragment() {
     private var imageUri: Uri? = null
     private var serviceId: String = ""
 
-    // Koristimo EditServiceViewModel za čuvanje unosa
+
     private val viewModel: EditServiceViewModel by viewModels()
 
     private val pickImage = registerForActivityResult(
@@ -53,7 +53,7 @@ class EditServiceFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setupKeyboardListener()
         setupTextWatchers()
-        // Pokrećemo image picker kada korisnik klikne na sliku
+
         binding.ivServiceImage.setOnClickListener {
             pickImage.launch("image/*")
         }
@@ -89,22 +89,24 @@ class EditServiceFragment : Fragment() {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.setTitle(s.toString())
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         binding.etDescription.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.setDescription(s.toString())
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
+
         binding.etPrice.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 viewModel.setPrice(s.toString())
             }
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
     }
 
@@ -116,10 +118,15 @@ class EditServiceFragment : Fragment() {
                 if (!isAdded || _binding == null) return@addOnSuccessListener
 
                 if (document.exists()) {
-                    // Učitavamo podatke iz dokumenta i postavljamo id iz document.id
-                    currentCraftsmanData = document.toObject(CraftsmanData::class.java)!!
-                    currentCraftsmanData.id = document.id
-                    // Ažuriramo ViewModel s dohvaćenim podacima
+                    try {
+                        currentCraftsmanData = document.toObject(CraftsmanData::class.java)!!
+
+                        currentCraftsmanData.id = document.id
+                    } catch (e: Exception) {
+                        showError("Deserialization error: ${e.message}")
+                        return@addOnSuccessListener
+                    }
+
                     viewModel.setTitle(currentCraftsmanData.name)
                     viewModel.setDescription(currentCraftsmanData.description)
                     viewModel.setPrice(currentCraftsmanData.price.toString())

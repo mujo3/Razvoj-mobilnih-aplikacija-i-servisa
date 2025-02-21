@@ -17,7 +17,7 @@ class ProfileSetupActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private var userType: String = "kupac"
 
-    // Koristimo ProfileSetupViewModel za čuvanje unosa
+
     private val profileSetupViewModel: ProfileSetupViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class ProfileSetupActivity : AppCompatActivity() {
 
         checkUserProfile()
 
-        // Postavljanje podataka iz intent-a i ViewModel-a
+
         val email = intent.getStringExtra("email")
         val name = intent.getStringExtra("name")
         if (profileSetupViewModel.fullName.value.isNullOrEmpty()) {

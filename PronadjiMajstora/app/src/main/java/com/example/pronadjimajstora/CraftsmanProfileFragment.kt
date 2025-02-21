@@ -24,24 +24,24 @@ class CraftsmanProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    // Koristimo CraftsmanProfileViewModel za čuvanje stanja profila
+
     private val profileViewModel: CraftsmanProfileViewModel by viewModels()
 
-    // Launcher za odabir slike iz galerije
+
     private val pickProfileImageLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let { selectedUri ->
-            // Upload slike na Firebase Storage
+
             val storageRef = FirebaseStorage.getInstance().reference.child("profile_images/${auth.currentUser?.uid}.jpg")
             storageRef.putFile(selectedUri)
                 .addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { downloadUri ->
-                        // Ako je dijalog još otvoren, ažuriraj ImageView u dijalogu
+
                         currentDialogView?.findViewById<ImageView>(R.id.ivDialogProfilePicture)?.let { iv ->
                             Glide.with(requireContext()).load(downloadUri.toString()).into(iv)
                         }
-                        // Ažuriraj ViewModel
+
                         profileViewModel.setProfilePicUrl(downloadUri.toString())
                     }
                 }
@@ -51,7 +51,7 @@ class CraftsmanProfileFragment : Fragment() {
         }
     }
 
-    // Držač reference na trenutno otvoreni dialog (ako postoji)
+
     private var currentDialogView: View? = null
 
     override fun onCreateView(
@@ -78,7 +78,7 @@ class CraftsmanProfileFragment : Fragment() {
                 .get()
                 .addOnSuccessListener { document ->
                     document?.let {
-                        // Ažuriramo ViewModel s učitanim podacima
+
                         profileViewModel.apply {
                             if (name.value.isNullOrEmpty()) setName(it.getString("name") ?: "")
                             if (specialization.value.isNullOrEmpty()) setSpecialization(it.getString("specialization") ?: "")
@@ -120,7 +120,7 @@ class CraftsmanProfileFragment : Fragment() {
 
     private fun showEditProfileDialog() {
         val dialogView = layoutInflater.inflate(R.layout.dialog_edit_profile, null)
-        currentDialogView = dialogView // Spremi referencu na trenutno otvoreni dijalog view
+        currentDialogView = dialogView
 
         val etName = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etName)
         val etSpecialization = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etSpecialization)
@@ -130,7 +130,7 @@ class CraftsmanProfileFragment : Fragment() {
         val etBio = dialogView.findViewById<com.google.android.material.textfield.TextInputEditText>(R.id.etBio)
         val ivDialogProfilePicture = dialogView.findViewById<ImageView>(R.id.ivDialogProfilePicture)
 
-        // Postavi trenutno spremljene podatke
+
         etName.setText(profileViewModel.name.value)
         etSpecialization.setText(profileViewModel.specialization.value)
         etLocation.setText(profileViewModel.location.value)
@@ -142,7 +142,7 @@ class CraftsmanProfileFragment : Fragment() {
             Glide.with(requireContext()).load(profilePicUrl).into(ivDialogProfilePicture)
         }
 
-        // Dodaj onClickListener na ImageView za promjenu slike
+
         ivDialogProfilePicture.setOnClickListener {
             pickProfileImageLauncher.launch("image/*")
         }
@@ -158,7 +158,7 @@ class CraftsmanProfileFragment : Fragment() {
                     "phone" to etPhone.text.toString(),
                     "email" to etEmail.text.toString(),
                     "bio" to etBio.text.toString(),
-                    "profilePicUrl" to profileViewModel.profilePicUrl.value // ažurirano ako je promijenjeno
+                    "profilePicUrl" to profileViewModel.profilePicUrl.value
                 )
                 val currentUser = auth.currentUser
                 if (currentUser != null) {

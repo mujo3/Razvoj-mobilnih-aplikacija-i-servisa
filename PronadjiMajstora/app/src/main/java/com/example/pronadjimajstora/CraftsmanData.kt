@@ -4,11 +4,11 @@ import com.google.firebase.firestore.IgnoreExtraProperties
 
 @IgnoreExtraProperties
 data class CraftsmanData(
-    var id: String = "",           // Dodano za potrebe dokument referenci
-    var name: String = "",         // naziv usluge
+    var id: String = "",
+    var name: String = "",
     var description: String = "",
     var price: Double = 0.0,
-    var craftsman: String = "",     // ime majstora
+    var craftsman: String = "",
     var location: String = "",
     var rating: Float = 0f,
     var specialization: String = "",

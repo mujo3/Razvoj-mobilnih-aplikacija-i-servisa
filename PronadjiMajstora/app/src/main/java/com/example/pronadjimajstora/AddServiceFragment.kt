@@ -27,7 +27,6 @@ class AddServiceFragment : Fragment() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
 
-    // Koristimo AddServiceViewModel za čuvanje unosa (npr. naslov, opis, cijena, URL slike)
     private val viewModel: AddServiceViewModel by viewModels()
 
     private val pickImage = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -160,7 +159,7 @@ class AddServiceFragment : Fragment() {
     }
 
     private fun getServiceData(document: DocumentSnapshot): CraftsmanData {
-        // Sada kreiramo objekt koji sadrži i podatke iz forme i podatke iz korisničkog dokumenta.
+
         return CraftsmanData(
             name = viewModel.title.value ?: "",  // naziv usluge
             description = viewModel.description.value ?: "",
@@ -170,7 +169,7 @@ class AddServiceFragment : Fragment() {
             rating = document.getDouble("rating")?.toFloat() ?: 0f,
             specialization = document.getString("specialization") ?: "Nepoznato",
             imageUrl = viewModel.imageUrl.value ?: "default",
-            category = ""  // ako imate kategoriju, dodajte je ovdje
+            category = ""
         )
     }
 
@@ -199,7 +198,7 @@ class AddServiceFragment : Fragment() {
             .addOnSuccessListener { documentReference ->
                 showConfirmation()
                 clearForm()
-                // Log ili Toast za potvrdu
+
                 println("Uspješno dodan oglas s ID-em: ${documentReference.id}")
             }
             .addOnFailureListener { e ->

@@ -18,7 +18,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    // Inicijaliziramo LoginViewModel – čuva se samo email
+
     private val loginViewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         setupClickListeners()
         setupTextWatchers()
-        // Vraćamo spremljeni email iz ViewModel-a
+
         binding.etEmail.setText(loginViewModel.email.value)
     }
 

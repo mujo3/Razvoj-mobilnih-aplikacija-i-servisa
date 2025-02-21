@@ -22,7 +22,7 @@ class CraftsmanMessagesFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // Ovdje dodaj logiku za poruke
+
     }
 
     override fun onDestroyView() {

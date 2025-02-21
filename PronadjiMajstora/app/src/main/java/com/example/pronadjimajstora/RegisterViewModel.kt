@@ -9,7 +9,7 @@ class RegisterViewModel(private val savedStateHandle: SavedStateHandle) : ViewMo
         private const val KEY_EMAIL = "register_email"
     }
 
-    // Čuvamo samo email – šifre se ne spremaju
+
     val email: LiveData<String> = savedStateHandle.getLiveData(KEY_EMAIL, "")
 
     fun setEmail(newEmail: String) {

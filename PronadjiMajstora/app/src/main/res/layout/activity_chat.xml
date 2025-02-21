@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- RecyclerView za poruke -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMessages"
         android:layout_width="match_parent"
@@ -17,7 +17,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_message"/>
 
-    <!-- Input za slanje poruka -->
+
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +30,7 @@
             android:hint="Napišite poruku"/>
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Dugme za slanje -->
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnSend"
         android:layout_width="match_parent"

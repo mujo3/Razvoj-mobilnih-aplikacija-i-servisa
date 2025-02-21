@@ -18,7 +18,7 @@
         android:orientation="vertical"
         android:paddingBottom="72dp">
 
-        <!-- Ime i prezime -->
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/TextInputStyle"
             android:layout_width="match_parent"
@@ -35,7 +35,7 @@
                 android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Lokacija -->
+
         <com.google.android.material.textfield.TextInputLayout
             style="@style/TextInputStyle"
             android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                 android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Tip korisnika -->
+
         <RadioGroup
             android:id="@+id/radioUserType"
             android:layout_width="wrap_content"
@@ -78,7 +78,7 @@
                 app:buttonTint="@color/colorPrimary" />
         </RadioGroup>
 
-        <!-- Specijalizacija -->
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/layoutSpecialization"
             style="@style/TextInputStyle"
@@ -96,7 +96,7 @@
                 android:textColor="@color/colorText" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Dugme za dovršetak registracije -->
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCompleteRegistration"
             style="@style/Widget.MaterialComponents.Button"

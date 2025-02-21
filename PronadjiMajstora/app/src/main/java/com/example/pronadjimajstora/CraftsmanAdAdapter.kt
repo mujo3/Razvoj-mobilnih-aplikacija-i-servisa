@@ -29,10 +29,10 @@ class CraftsmanAdAdapter(
         with(holder.binding) {
             tvAdTitle.text = service.name
             tvAdDescription.text = service.description
-            // Ažurirana linija: prikaz cijene
+
             tvAdPrice.text = String.format("%.2f KM", service.price)
 
-            // Učitavanje slike – ako je imageUrl "default", učitava se lokalna slika
+
             if (service.imageUrl == "default") {
                 Glide.with(holder.itemView.context)
                     .load(R.drawable.ic_add_photo)

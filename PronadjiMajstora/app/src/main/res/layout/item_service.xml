@@ -14,7 +14,7 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- ImageView za prikaz slike usluge s fiksnom veličinom -->
+
         <ImageView
             android:id="@+id/ivServiceImage"
             android:layout_width="150sp"
@@ -49,7 +49,7 @@
             android:layout_marginTop="8dp"
             android:isIndicator="true"/>
 
-        <!-- Ažurirani element za lokaciju -->
+
         <TextView
             android:id="@+id/tvLocation"
             android:layout_width="match_parent"
@@ -77,13 +77,32 @@
             android:maxLines="3"
             android:ellipsize="end"/>
 
-        <Button
-            android:id="@+id/btnContact"
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Kontaktiraj"
-            android:layout_marginTop="16dp"
-            android:backgroundTint="@color/colorAccent"
-            android:textColor="@color/white"/>
+            android:orientation="horizontal"
+            android:layout_marginTop="16dp">
+
+            <Button
+                android:id="@+id/btnContact"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Kontaktiraj"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/white"
+                android:layout_marginEnd="8dp"/>
+
+            <Button
+                android:id="@+id/btnEndAd"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Završi oglas"
+                android:backgroundTint="@color/colorAccent"
+                android:textColor="@color/white"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

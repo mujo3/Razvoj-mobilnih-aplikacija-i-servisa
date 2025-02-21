@@ -19,7 +19,7 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
-    // Koristimo ProfileViewModel za očuvanje stanja unosa
+
     private val profileViewModel: ProfileViewModel by viewModels()
 
     private val getImageLauncher =
@@ -57,7 +57,7 @@ class EditProfileActivity : AppCompatActivity() {
                 .get()
                 .addOnSuccessListener { document ->
                     document?.let {
-                        // Ako ViewModel još nema vrijednosti, postavljamo ih iz Firestore-a
+
                         if (profileViewModel.name.value.isNullOrEmpty()) {
                             profileViewModel.setName(it.getString("name") ?: "")
                         }

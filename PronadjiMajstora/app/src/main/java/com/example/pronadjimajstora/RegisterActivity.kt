@@ -24,7 +24,7 @@ class RegisterActivity : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    // Inicijaliziramo RegisterViewModel – stanje emaila će se čuvati
+
     private val registerViewModel: RegisterViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class RegisterActivity : AppCompatActivity() {
         initializeAuth()
         setupClickListeners()
         setupTextWatchers()
-        // Obnova spremljene vrijednosti emaila iz ViewModel-a
+
         binding.etEmail.setText(registerViewModel.email.value)
     }
 

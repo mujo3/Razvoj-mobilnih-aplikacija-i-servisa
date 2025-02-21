@@ -22,7 +22,7 @@
             android:contentInsetStart="0dp"
             android:contentInsetEnd="0dp">
 
-            <!-- LinearLayout za dvodijelni naslov -->
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -53,7 +53,7 @@
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Fragment container -->
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
@@ -61,7 +61,7 @@
         android:paddingBottom="72dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
-    <!-- BottomNavigationView -->
+
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"

@@ -41,7 +41,6 @@ class CraftsmanAdsFragment : Fragment() {
     private fun setupRecyclerView() {
         adapter = CraftsmanAdAdapter(ads,
             onEditClick = { service ->
-                // Navigacija na fragment za uređivanje oglasa
                 val editFragment = EditServiceFragment.newInstance(service.id)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.fragment_container, editFragment)
@@ -91,7 +90,6 @@ class CraftsmanAdsFragment : Fragment() {
                     if (snapshot != null) {
                         ads.clear()
                         for (doc in snapshot.documents) {
-                            // Postavljamo document ID u Service model (pretpostavljamo da Service ima var id: String)
                             val service = doc.toObject(Service::class.java)?.copy(id = doc.id)
                             if (service != null) {
                                 ads.add(service)

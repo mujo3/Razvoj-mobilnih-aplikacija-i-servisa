@@ -27,7 +27,7 @@ class FilterDialogFragment : DialogFragment() {
     private lateinit var seekBarPrice: SeekBar
     private lateinit var tvMaxPrice: androidx.appcompat.widget.AppCompatTextView
 
-    // Koristimo activityViewModels kako bi se podaci dijelili s HomeCustomerActivity
+
     private val filterViewModel: FilterViewModel by activityViewModels()
 
     fun setFilterListener(listener: FilterListener) {
@@ -59,7 +59,7 @@ class FilterDialogFragment : DialogFragment() {
         setupCategorySpinner()
         setupSeekBar()
 
-        // Obnova stanja iz ViewModel-a
+
         filterViewModel.location.value?.let {
             etLocation.setText(it)
         }
@@ -76,12 +76,12 @@ class FilterDialogFragment : DialogFragment() {
         FirebaseFirestore.getInstance().collection("services")
             .get()
             .addOnSuccessListener { result ->
-                // Dohvaćamo specijalizacije i sortiramo abecedno
+
                 val specializations = result.documents.mapNotNull { doc ->
                     doc.getString("specialization")
                 }.distinct().sorted()
 
-                // "Sve kategorije" uvijek prvi
+
                 val categories = mutableListOf("Sve kategorije")
                 categories.addAll(specializations)
 
@@ -92,7 +92,7 @@ class FilterDialogFragment : DialogFragment() {
                 )
                 spinnerCategory.setAdapter(adapter)
 
-                // Ako u ViewModel‑u već postoji vrijednost, postavljamo je
+
                 filterViewModel.category.value?.let { category ->
                     spinnerCategory.setText(category, false)
                 }
