@@ -12,7 +12,7 @@ Ovaj repozitorij sadrži kompletan set materijala razvijenih u sklopu predmeta *
 
 ## Struktura Repozitorija
 
-### Zadace i Provjere
+### Zadaće i Provjere
 - **Dokumentacija:**  
   U mapi *Zadace i provjere - Dokumentacija* nalaze se PDF dokumenti koji sadrže detaljne specifikacije i upute za zadatke svakog pojedinog projekta. Također, tu su smješteni PDF dokumenti za provjere zadaca, koji uključuju specifikacije za dopunu naših projekata, realizovanih tijekom laboratorijskih vježbi.
   
@@ -23,7 +23,7 @@ Ovaj repozitorij sadrži kompletan set materijala razvijenih u sklopu predmeta *
 - **Dokumentacija i Specifikacije:**  
   U mapi *PronadjiMajstora - Dokumentacija i specifikacije projekta* nalaze se PDF dokumenti sa specifikacijom projekta, detaljnom dokumentacijom aplikacije, uputstvom za korištenje te prezentacijom same aplikacije.
   
-- **Android Projekt:**  
+- **Android Projekat:**  
   Mapa *PronadjiMajstora* sadrži kompletan Android projekat koji je razvijen u skladu s gore navedenom dokumentacijom i specifikacijama.
 
 
